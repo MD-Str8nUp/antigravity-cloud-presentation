@@ -29,10 +29,10 @@ usage() {
 Usage: $(basename "$0") <subcommand>
 
 Subcommands:
-  process-run <cast> <proj>  Sanitize/trim a single cast, inject chapter markers, update HTML player, and export Agy Session Traces
+  process-run <cast> <proj>  Sanitize/trim a single cast, inject chapter markers, update HTML player, export Agy Session Traces, and sync workspace into experiments/
   postprocess-casts          Run sanitize-cast.py, mark-cast.py, and trim-cast.py across all captured .cast files
   extract-traces             Export Session Traces from ~/.gemini/**/brain/ via agy-brain-explorer
-  sync-experiments           Copy completed experiment workspaces from \$DEMOS_ROOT into \$PRESENTATION_ROOT/experiments/ (excluding target/ and .venv/)
+  sync-experiments [proj]    Copy completed experiment workspace(s) from \$DEMOS_ROOT into \$PRESENTATION_ROOT/experiments/ (excluding target/ and .venv/)
   status                     Print current state of all 3 workspaces, .cast recordings, Session Traces, and HTML cast players
 EOF
 }
@@ -77,6 +77,25 @@ process_single_cast() {
   python3 "$trim_script" "$final_file" --info
 }
 
+sync_single_experiment() {
+  local proj="$1"
+  mkdir -p "$EXPERIMENTS_DIR"
+  local src="$DEMOS_ROOT/$proj"
+  local dst="$EXPERIMENTS_DIR/$proj"
+  if [[ -d "$src" ]]; then
+    echo "=== Syncing $proj -> $dst (excluding target/, .venv/, __pycache__/, .git/) ==="
+    mkdir -p "$dst"
+    rsync -a --delete \
+      --exclude 'target/' \
+      --exclude '.venv/' \
+      --exclude '__pycache__/' \
+      --exclude '.git/' \
+      "$src/" "$dst/"
+  else
+    echo "[SKIP] $src does not exist yet"
+  fi
+}
+
 process_run() {
   local cast_name="${1:?Usage: setup-workspaces.sh process-run <cast-name.cast> <project-name>}"
   local proj="${2:?Usage: setup-workspaces.sh process-run <cast-name.cast> <project-name>}"
@@ -93,6 +112,9 @@ process_run() {
   echo ""
   echo "Exported Markdown Session Traces in $TRACES_DIR/$proj:"
   ls -la "$TRACES_DIR/$proj"
+
+  echo ""
+  sync_single_experiment "$proj"
 }
 
 postprocess_casts() {
@@ -115,23 +137,14 @@ extract_traces() {
 }
 
 sync_experiments() {
-  mkdir -p "$EXPERIMENTS_DIR"
-  for proj in audio_inventory_baseline audio_inventory_skilled audio_inventory_production; do
-    local src="$DEMOS_ROOT/$proj"
-    local dst="$EXPERIMENTS_DIR/$proj"
-    if [[ -d "$src" ]]; then
-      echo "=== Syncing $proj -> $dst (excluding target/, .venv/, __pycache__/, .git/) ==="
-      mkdir -p "$dst"
-      rsync -a --delete \
-        --exclude 'target/' \
-        --exclude '.venv/' \
-        --exclude '__pycache__/' \
-        --exclude '.git/' \
-        "$src/" "$dst/"
-    else
-      echo "[SKIP] $src does not exist yet"
-    fi
-  done
+  local target_proj="${1:-}"
+  if [[ -n "$target_proj" ]]; then
+    sync_single_experiment "$target_proj"
+  else
+    for proj in audio_inventory_baseline audio_inventory_skilled audio_inventory_production; do
+      sync_single_experiment "$proj"
+    done
+  fi
 }
 
 show_status() {
@@ -202,7 +215,8 @@ case "$cmd" in
     extract_traces
     ;;
   sync-experiments)
-    sync_experiments
+    shift
+    sync_experiments "$@"
     ;;
   status)
     show_status
