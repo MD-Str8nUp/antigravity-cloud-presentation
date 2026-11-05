@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- MANDATORY: Declare support for both light and dark themes -->
+  <meta name="color-scheme" content="light dark">
+  <script>
+    try {
+      document.querySelector('meta[name="color-scheme"]').content = localStorage.getItem("color-scheme") ?? "light dark";
+    } catch {}
+  </script>
+  <title>PatchBay &amp; Bench | Audio DIY Inventory &amp; Kit Builds</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='none' stroke='%230f62fe' stroke-width='2.5'/><circle cx='16' cy='16' r='5' fill='none' stroke='%230f62fe' stroke-width='2.2'/></svg>">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a href="#main-heading" class="skip-link visually-hidden">Skip to main content</a>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="28" height="28">
+            <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2.2"/>
+            <circle cx="16" cy="16" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="16" y1="3" x2="16" y2="11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="8" cy="23" r="1.8" fill="currentColor"/>
+            <circle cx="24" cy="23" r="1.8" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <span class="brand-title">PatchBay &amp; Bench</span>
+          <span class="brand-subtitle">Eurorack &amp; Stompbox Parts + Kit Build Tracker</span>
+        </div>
+      </div>
+
+      <nav aria-label="Primary" class="primary-nav">
+        <ul role="list" class="nav-list">
+          <li>
+            <button type="button" class="nav-tab is-active" data-view="inventory" aria-current="page">
+              <svg aria-hidden="true" viewBox="0 0 20 20" width="16" height="16"><path fill="currentColor" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm1 5h12v7a2 2 0 01-2 2H6a2 2 0 01-2-2V9zm4 3a1 1 0 000 2h4a1 1 0 000-2H8z"/></svg>
+              Components
+              <span id="nav-badge-components" class="badge">0</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="nav-tab" data-view="projects">
+              <svg aria-hidden="true" viewBox="0 0 20 20" width="16" height="16"><path fill="currentColor" d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/></svg>
+              DIY Kit Builds
+              <span id="nav-badge-projects" class="badge">0</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="nav-tab" data-view="shopping">
+              <svg aria-hidden="true" viewBox="0 0 20 20" width="16" height="16"><path fill="currentColor" d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+              Order / Shortages
+              <span id="nav-badge-shopping" class="badge badge-warn">0</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" id="theme-toggle-btn" class="btn btn-ghost btn-icon" aria-label="Toggle color theme">
+          <svg class="theme-icon-sun" aria-hidden="true" viewBox="0 0 20 20" width="18" height="18">
+            <path fill="currentColor" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+          </svg>
+          <svg class="theme-icon-moon" aria-hidden="true" viewBox="0 0 20 20" width="18" height="18">
+            <path fill="currentColor" d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+          </svg>
+          <span id="theme-toggle-label" class="visually-hidden">Switch color theme</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div class="page-head">
+      <div>
+        <h1 id="main-heading" tabindex="-1">Audio Components Inventory</h1>
+        <p id="main-subheading" class="page-subtitle">Track Total On Hand, Allocated project parts, and Available bench stock.</p>
+      </div>
+      <div id="page-primary-actions" class="action-cluster">
+        <button type="button" id="btn-open-csv-import" class="btn btn-secondary">Import / Export CSV</button>
+        <button type="button" id="btn-add-component" class="btn btn-primary">+ Add Component</button>
+      </div>
+    </div>
+
+    <!-- Metric Strip -->
+    <section aria-label="Workshop Overview Metrics" class="metrics-grid">
+      <div class="metric-card">
+        <span class="metric-label">Unique Parts</span>
+        <strong id="metric-unique-parts" class="metric-value">0</strong>
+        <span id="metric-inventory-value" class="metric-foot">$0.00 est. bench value</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Available / On Hand</span>
+        <div class="metric-split">
+          <strong id="metric-units-available" class="metric-value text-accent">0</strong>
+          <span class="metric-divider">/</span>
+          <span id="metric-units-onhand" class="metric-subvalue">0 total</span>
+        </div>
+        <span id="metric-units-allocated" class="metric-foot">0 allocated to builds</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Active Kit Builds</span>
+        <strong id="metric-active-builds" class="metric-value">0</strong>
+        <span id="metric-completed-builds" class="metric-foot">0 completed builds</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Low Stock &amp; Shortages</span>
+        <strong id="metric-low-stock" class="metric-value text-warn">0</strong>
+        <span id="metric-shopping-count" class="metric-foot">0 lines on order list</span>
+      </div>
+    </section>
+
+    <!-- VIEW 1: COMPONENTS INVENTORY -->
+    <section id="view-inventory" class="view-section" aria-labelledby="inventory-section-heading">
+      <h2 id="inventory-section-heading" class="visually-hidden">Components Inventory Table and Filters</h2>
+
+      <search class="filter-bar">
+        <form id="inventory-filter-form" class="filter-form">
+          <div class="filter-field filter-search">
+            <label for="inv-search">Search parts, values, footprints, bins, or SKUs</label>
+            <input
+              type="search"
+              id="inv-search"
+              name="q"
+              placeholder="e.g. TL072, 100nF, 0603, Thonkiconn, Binder A..."
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+            >
+          </div>
+
+          <div class="filter-field">
+            <label for="inv-category">Category</label>
+            <select id="inv-category" name="category">
+              <option value="ALL">All Categories</option>
+              <option value="Resistors">Resistors</option>
+              <option value="Capacitors">Capacitors</option>
+              <option value="Semiconductors & ICs">Semiconductors &amp; ICs</option>
+              <option value="Potentiometers & Encoders">Potentiometers &amp; Encoders</option>
+              <option value="Jacks, Switches & Hardware">Jacks, Switches &amp; Hardware</option>
+              <option value="Inductors, Transformers & Crystals">Inductors, Transformers &amp; Crystals</option>
+              <option value="Other / Misc">Other / Misc</option>
+            </select>
+          </div>
+
+          <div class="filter-field">
+            <label for="inv-footprint">Package / Footprint</label>
+            <select id="inv-footprint" name="footprint">
+              <option value="ALL">All Footprints</option>
+              <option value="SMD">SMD (0603 / 0805 / SOIC / SSOP)</option>
+              <option value="THT">Through-Hole (Axial / Radial / DIP / Box)</option>
+              <option value="PANEL">Panel &amp; Hardware (Jacks / Pots / Switches)</option>
+            </select>
+          </div>
+
+          <div class="filter-field">
+            <label for="inv-stock-filter">Stock Status</label>
+            <select id="inv-stock-filter" name="stock">
+              <option value="ALL">All Stock Levels</option>
+              <option value="LOW">Low Available Stock (&le; Min)</option>
+              <option value="ALLOCATED">Currently Allocated to Builds</option>
+              <option value="OUT">Zero Available (0 Avail)</option>
+            </select>
+          </div>
+        </form>
+      </search>
+
+      <div tabindex="0" role="region" aria-labelledby="components-table-caption" class="table-wrapper">
+        <table id="components-table">
+          <caption id="components-table-caption" class="visually-hidden">
+            Audio electronics components inventory with total on hand, allocated to projects, and available stock
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Component / Specs</th>
+              <th scope="col">Value</th>
+              <th scope="col">Category &amp; Footprint</th>
+              <th scope="col">Storage Location</th>
+              <th scope="col">Supplier / SKU</th>
+              <th scope="col" class="num-col">On Hand</th>
+              <th scope="col" class="num-col">Allocated</th>
+              <th scope="col" class="num-col">Available</th>
+              <th scope="col" class="actions-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="components-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW 2: DIY KIT BUILDS / PROJECTS -->
+    <section id="view-projects" class="view-section" hidden aria-labelledby="projects-section-heading">
+      <h2 id="projects-section-heading" class="visually-hidden">DIY Kit Builds and Projects</h2>
+
+      <div class="projects-layout">
+        <!-- Left column: Project Cards List -->
+        <aside aria-label="DIY Projects List" class="projects-sidebar">
+          <div class="sidebar-header">
+            <label for="project-status-filter" class="visually-hidden">Filter builds by status</label>
+            <select id="project-status-filter" class="select-compact">
+              <option value="ALL">All Build Stages</option>
+              <option value="ACTIVE">Active Bench Builds</option>
+              <option value="Planning">Planning</option>
+              <option value="Parts Ordered">Parts Ordered</option>
+              <option value="Ready to Build">Ready to Build</option>
+              <option value="Soldering">Soldering</option>
+              <option value="Testing & Calibration">Testing &amp; Calibration</option>
+              <option value="Troubleshooting / On Hold">Troubleshooting / On Hold</option>
+              <option value="Completed">Completed</option>
+            </select>
+            <button type="button" id="btn-new-project-inline" class="btn btn-primary btn-sm">+ New Build</button>
+          </div>
+          <ul id="projects-list" role="list" class="project-cards-list"></ul>
+        </aside>
+
+        <!-- Right column: Active Project Workspace (BOM + Allocation + Build Logs) -->
+        <div id="project-workspace" class="project-workspace">
+          <div id="project-empty-state" class="empty-state" hidden>
+            <h3>Select or create a DIY Kit Build</h3>
+            <p>Track Eurorack modules and guitar pedals from BOM planning and part baggie allocation to soldering and calibration.</p>
+          </div>
+
+          <article id="project-detail-pane" class="project-detail-pane" hidden>
+            <header class="project-detail-header">
+              <div class="project-title-block">
+                <div class="project-badges-row">
+                  <span id="proj-detail-type" class="pill pill-type">Eurorack Module</span>
+                  <span id="proj-detail-specs" class="proj-specs-text">8HP</span>
+                </div>
+                <h2 id="proj-detail-title" class="proj-detail-title">Project Name</h2>
+                <p id="proj-detail-vendor" class="proj-vendor-line"></p>
+                <p id="proj-detail-notes" class="proj-notes-line"></p>
+              </div>
+
+              <div class="project-header-controls">
+                <div class="status-control-group">
+                  <label for="proj-status-select">Build Stage</label>
+                  <select id="proj-status-select" name="status">
+                    <option value="Planning">Planning</option>
+                    <option value="Parts Ordered">Parts Ordered</option>
+                    <option value="Ready to Build">Ready to Build</option>
+                    <option value="Soldering">Soldering</option>
+                    <option value="Testing & Calibration">Testing &amp; Calibration</option>
+                    <option value="Troubleshooting / On Hold">Troubleshooting / On Hold</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </div>
+                <div class="project-btn-row">
+                  <button type="button" id="btn-edit-project" class="btn btn-secondary btn-sm">Edit Details</button>
+                  <button type="button" id="btn-delete-project" class="btn btn-danger-ghost btn-sm">Delete</button>
+                </div>
+              </div>
+            </header>
+
+            <!-- BOM Readiness & Allocation Toolbar -->
+            <div class="bom-Readiness-banner">
+              <div class="readiness-stats">
+                <div class="readiness-stat">
+                  <span class="stat-label">BOM Readiness</span>
+                  <strong id="proj-stat-readiness">0 / 0 lines ready</strong>
+                </div>
+                <div class="readiness-stat">
+                  <span class="stat-label">Allocated to Kit Baggie</span>
+                  <strong id="proj-stat-allocated">0 / 0 parts</strong>
+                </div>
+                <div class="readiness-stat">
+                  <span class="stat-label">Soldered / Populated</span>
+                  <strong id="proj-stat-populated">0 / 0 lines</strong>
+                </div>
+                <div class="readiness-stat">
+                  <span class="stat-label">Est. BOM Cost</span>
+                  <strong id="proj-stat-cost">$0.00</strong>
+                </div>
+              </div>
+
+              <div class="allocation-actions-bar">
+                <button type="button" id="btn-allocate-all" class="btn btn-primary btn-sm">
+                  Allocate All Available Parts
+                </button>
+                <button type="button" id="btn-consume-allocated" class="btn btn-accent btn-sm">
+                  Solder / Consume Allocated Parts
+                </button>
+                <button type="button" id="btn-release-all" class="btn btn-secondary btn-sm">
+                  Release Reserved Parts
+                </button>
+                <button type="button" id="btn-auto-match-bom" class="btn btn-ghost btn-sm">
+                  Re-Match Unlinked
+                </button>
+              </div>
+            </div>
+
+            <!-- BOM Section -->
+            <section class="bom-section" aria-labelledby="bom-heading">
+              <div class="section-bar">
+                <h3 id="bom-heading">Bill of Materials (BOM) &amp; Part Allocation</h3>
+                <div class="action-cluster">
+                  <button type="button" id="btn-import-bom-csv" class="btn btn-secondary btn-sm">Import BOM CSV</button>
+                  <button type="button" id="btn-export-bom-csv" class="btn btn-ghost btn-sm">Export BOM CSV</button>
+                  <button type="button" id="btn-add-bom-line" class="btn btn-primary btn-sm">+ Add BOM Line</button>
+                </div>
+              </div>
+
+              <div tabindex="0" role="region" aria-labelledby="bom-table-caption" class="table-wrapper">
+                <table id="bom-table">
+                  <caption id="bom-table-caption" class="visually-hidden">
+                    Project Bill of Materials showing required quantities, linked inventory stock, allocated parts, and soldering checklist
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col" class="check-col">Soldered</th>
+                      <th scope="col">Designators</th>
+                      <th scope="col">Value &amp; Part</th>
+                      <th scope="col">Footprint</th>
+                      <th scope="col">Inventory Match &amp; Bin</th>
+                      <th scope="col" class="num-col">Req</th>
+                      <th scope="col" class="num-col">Allocated</th>
+                      <th scope="col" class="num-col">Bench Avail</th>
+                      <th scope="col">Status</th>
+                      <th scope="col" class="actions-col">Part Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bom-tbody"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- Build Logs / Bench Notes Section -->
+            <section class="logs-section" aria-labelledby="logs-heading">
+              <div class="section-bar">
+                <h3 id="logs-heading">Bench Build Log &amp; Calibration Notes</h3>
+              </div>
+
+              <form id="build-log-form" class="log-entry-form">
+                <div class="log-form-type">
+                  <label for="log-type-select">Entry Type</label>
+                  <select id="log-type-select" name="log_type">
+                    <option value="Progress">Progress</option>
+                    <option value="Calibration">Calibration / Trim</option>
+                    <option value="Modification">Mod / Component Sub</option>
+                    <option value="Troubleshooting">Troubleshooting</option>
+                    <option value="Note">Bench Note</option>
+                  </select>
+                </div>
+                <div class="log-form-input">
+                  <label for="log-entry-input">Log Note</label>
+                  <input
+                    type="text"
+                    id="log-entry-input"
+                    name="entry"
+                    required
+                    placeholder="e.g. Calibrated 1V/Oct trimmer RV1 across C1–C6, or matched 1N34A diodes at Vf=0.28V..."
+                  >
+                </div>
+                <div class="log-form-submit">
+                  <button type="submit" class="btn btn-secondary">Add Log Entry</button>
+                </div>
+              </form>
+
+              <ul id="build-logs-list" role="list" class="build-logs-list"></ul>
+            </section>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: SHOPPING LIST / SHORTAGES -->
+    <section id="view-shopping" class="view-section" hidden aria-labelledby="shopping-section-heading">
+      <div class="section-bar">
+        <div>
+          <h2 id="shopping-section-heading">Order List &amp; BOM Shortages</h2>
+          <p class="section-desc">
+            Automatically aggregates unallocated BOM shortages across all active kit builds plus components at or below their minimum restock threshold.
+          </p>
+        </div>
+        <div class="action-cluster">
+          <label for="shopping-supplier-filter" class="visually-hidden">Filter by Supplier</label>
+          <select id="shopping-supplier-filter">
+            <option value="ALL">All Suppliers</option>
+          </select>
+          <button type="button" id="btn-export-shopping-csv" class="btn btn-primary">Export Shopping List CSV</button>
+        </div>
+      </div>
+
+      <div tabindex="0" role="region" aria-labelledby="shopping-table-caption" class="table-wrapper">
+        <table id="shopping-table">
+          <caption id="shopping-table-caption" class="visually-hidden">
+            Parts to order grouped with supplier SKUs, project shortage breakdown, and quick receive actions
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Part &amp; Value</th>
+              <th scope="col">Footprint</th>
+              <th scope="col">Reason / Affected Builds</th>
+              <th scope="col">Supplier &amp; SKU</th>
+              <th scope="col" class="num-col">Bench Avail</th>
+              <th scope="col" class="num-col">Order Qty</th>
+              <th scope="col" class="num-col">Est. Cost</th>
+              <th scope="col" class="actions-col">Receive Stock</th>
+            </tr>
+          </thead>
+          <tbody id="shopping-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>PatchBay &amp; Bench • Local SQLite Persistence (<code>data/inventory.sqlite</code>) • Eurorack &amp; Guitar Pedal DIY Tracker</p>
+  </footer>
+
+  <!-- Centralized Polite Live Region for Accessible Status Announcements -->
+  <div id="status-announcer" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- MODAL 1: ADD / EDIT COMPONENT -->
+  <dialog id="dialog-component" closedby="any" aria-labelledby="dialog-component-title">
+    <div class="dialog-header">
+      <h2 id="dialog-component-title">Add Component</h2>
+      <button type="button" class="btn btn-ghost btn-icon dialog-close-btn" data-close-dialog="dialog-component" aria-label="Close component dialog">&times;</button>
+    </div>
+    <form id="form-component" class="dialog-form" novalidate>
+      <input type="hidden" id="comp-id" name="id">
+
+      <div class="form-grid-2">
+        <div class="field">
+          <label for="comp-name">Component Name *</label>
+          <span id="comp-name-hint" class="hint">Descriptive part name (e.g., TL072CP Dual JFET Op-Amp)</span>
+          <input
+            type="text"
+            id="comp-name"
+            name="name"
+            autocomplete="off"
+            required
+            aria-describedby="comp-name-hint"
+            aria-errormessage="comp-name-error"
+          >
+          <div id="comp-name-error" class="error-msg">Please enter a component name.</div>
+        </div>
+
+        <div class="field">
+          <label for="comp-category">Category *</label>
+          <span id="comp-cat-hint" class="hint">Select primary electronics group</span>
+          <select id="comp-category" name="category" required aria-describedby="comp-cat-hint">
+            <option value="Resistors">Resistors</option>
+            <option value="Capacitors">Capacitors</option>
+            <option value="Semiconductors & ICs">Semiconductors &amp; ICs</option>
+            <option value="Potentiometers & Encoders">Potentiometers &amp; Encoders</option>
+            <option value="Jacks, Switches & Hardware">Jacks, Switches &amp; Hardware</option>
+            <option value="Inductors, Transformers & Crystals">Inductors, Transformers &amp; Crystals</option>
+            <option value="Other / Misc">Other / Misc</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid-3">
+        <div class="field">
+          <label for="comp-value">Value / Part Code *</label>
+          <span id="comp-val-hint" class="hint">e.g., 100k, 100nF, TL072, B100k</span>
+          <input
+            type="text"
+            id="comp-value"
+            name="value"
+            required
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-describedby="comp-val-hint"
+            aria-errormessage="comp-val-error"
+          >
+          <div id="comp-val-error" class="error-msg">Please enter the component value or code.</div>
+        </div>
+
+        <div class="field">
+          <label for="comp-footprint">Package / Footprint</label>
+          <span id="comp-fp-hint" class="hint">e.g., THT Axial 1/4W, SMD 0603, DIP-8, Thonkiconn</span>
+          <input
+            type="text"
+            id="comp-footprint"
+            name="package_footprint"
+            list="footprint-suggestions"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-describedby="comp-fp-hint"
+          >
+          <datalist id="footprint-suggestions">
+            <option value="THT Axial 1/4W"></option>
+            <option value="SMD 0603"></option>
+            <option value="SMD 0805"></option>
+            <option value="DIP-8"></option>
+            <option value="DIP-14"></option>
+            <option value="DIP-16"></option>
+            <option value="SOIC-8"></option>
+            <option value="SSOP-16"></option>
+            <option value="TO-92"></option>
+            <option value="DO-35 Axial"></option>
+            <option value="Box 5mm Pitch"></option>
+            <option value="Radial 5x11mm"></option>
+            <option value="Alpha 9mm Vertical"></option>
+            <option value="Alpha 16mm PCB"></option>
+            <option value="Thonkiconn"></option>
+            <option value="3PDT Solder Lug"></option>
+            <option value="125B (122x66x39mm)"></option>
+          </datalist>
+        </div>
+
+        <div class="field">
+          <label for="comp-specs">Tolerance / Voltage / Taper</label>
+          <span id="comp-specs-hint" class="hint">e.g., 1% 0.25W, 50V C0G, Audio Taper</span>
+          <input
+            type="text"
+            id="comp-specs"
+            name="specs"
+            aria-describedby="comp-specs-hint"
+          >
+        </div>
+      </div>
+
+      <div class="form-grid-3">
+        <div class="field">
+          <label for="comp-qty">Total On Hand Qty *</label>
+          <span id="comp-qty-hint" class="hint">Physical count in workshop</span>
+          <input
+            type="number"
+            id="comp-qty"
+            name="qty_on_hand"
+            min="0"
+            step="1"
+            value="0"
+            required
+            aria-describedby="comp-qty-hint"
+          >
+        </div>
+
+        <div class="field">
+          <label for="comp-min-qty">Low-Stock Alert Threshold</label>
+          <span id="comp-min-hint" class="hint">Alert when Available &le; this number</span>
+          <input
+            type="number"
+            id="comp-min-qty"
+            name="min_qty"
+            min="0"
+            step="1"
+            value="5"
+            aria-describedby="comp-min-hint"
+          >
+        </div>
+
+        <div class="field">
+          <label for="comp-location">Storage Location / Bin</label>
+          <span id="comp-loc-hint" class="hint">e.g., Binder A p.4, Drawer C-12, ESD Box #1</span>
+          <input
+            type="text"
+            id="comp-location"
+            name="storage_location"
+            aria-describedby="comp-loc-hint"
+          >
+        </div>
+      </div>
+
+      <div class="form-grid-3">
+        <div class="field">
+          <label for="comp-supplier">Preferred Supplier</label>
+          <span id="comp-sup-hint" class="hint">e.g., Mouser, Tayda, Thonk, StompBoxParts</span>
+          <input
+            type="text"
+            id="comp-supplier"
+            name="supplier"
+            list="supplier-suggestions"
+            aria-describedby="comp-sup-hint"
+          >
+          <datalist id="supplier-suggestions">
+            <option value="Mouser"></option>
+            <option value="Tayda"></option>
+            <option value="Thonk"></option>
+            <option value="DigiKey"></option>
+            <option value="StompBoxParts"></option>
+            <option value="Amplified Parts"></option>
+            <option value="Modular Addict"></option>
+          </datalist>
+        </div>
+
+        <div class="field">
+          <label for="comp-sku">Supplier SKU / Part #</label>
+          <span id="comp-sku-hint" class="hint">e.g., 595-TL072CP, A-2214</span>
+          <input
+            type="text"
+            id="comp-sku"
+            name="supplier_sku"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-describedby="comp-sku-hint"
+          >
+        </div>
+
+        <div class="field">
+          <label for="comp-cost">Unit Cost ($)</label>
+          <span id="comp-cost-hint" class="hint">Price per single unit</span>
+          <input
+            type="number"
+            id="comp-cost"
+            name="unit_cost"
+            min="0"
+            step="0.01"
+            value="0.00"
+            aria-describedby="comp-cost-hint"
+          >
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="comp-notes">Bench Notes / Datasheet Notes</label>
+        <textarea id="comp-notes" name="notes" rows="2"></textarea>
+      </div>
+
+      <div id="comp-allocations-info" class="comp-allocations-box" hidden></div>
+
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-secondary" data-close-dialog="dialog-component">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Component</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL 2: ADD / EDIT DIY PROJECT -->
+  <dialog id="dialog-project" closedby="any" aria-labelledby="dialog-project-title">
+    <div class="dialog-header">
+      <h2 id="dialog-project-title">New DIY Kit Build</h2>
+      <button type="button" class="btn btn-ghost btn-icon dialog-close-btn" data-close-dialog="dialog-project" aria-label="Close project dialog">&times;</button>
+    </div>
+    <form id="form-project" class="dialog-form" novalidate>
+      <input type="hidden" id="proj-id" name="id">
+
+      <div class="form-grid-2">
+        <div class="field">
+          <label for="proj-name">Project / Module / Pedal Name *</label>
+          <span id="proj-name-hint" class="hint">e.g., Mutable Ripples 2020, Klon Centaur Overdrive</span>
+          <input
+            type="text"
+            id="proj-name"
+            name="name"
+            autocomplete="off"
+            required
+            aria-describedby="proj-name-hint"
+            aria-errormessage="proj-name-error"
+          >
+          <div id="proj-name-error" class="error-msg">Please enter a project name.</div>
+        </div>
+
+        <div class="field">
+          <label for="proj-type">Project Format *</label>
+          <span id="proj-type-hint" class="hint">Choose primary audio DIY category</span>
+          <select id="proj-type" name="project_type" required aria-describedby="proj-type-hint">
+            <option value="Eurorack Module">Eurorack Module</option>
+            <option value="Guitar Pedal">Guitar Pedal / Stompbox</option>
+            <option value="Synth / Desktop">Standalone Synth / Desktop</option>
+            <option value="Amp / Studio">Amp / 500-Series / Studio</option>
+            <option value="Utility / Power / Cable">Utility / Power / Tester</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="field">
+          <label for="proj-specs">HP / Enclosure / Power Specs</label>
+          <span id="proj-specs-hint" class="hint">e.g., 8HP • +12V: 35mA / -12V: 32mA or 125B • 9V DC</span>
+          <input
+            type="text"
+            id="proj-specs"
+            name="format_specs"
+            aria-describedby="proj-specs-hint"
+          >
+        </div>
+
+        <div class="field">
+          <label for="proj-status">Current Build Stage</label>
+          <span id="proj-status-hint" class="hint">Track where this build sits on your bench</span>
+          <select id="proj-status" name="status" aria-describedby="proj-status-hint">
+            <option value="Planning">Planning</option>
+            <option value="Parts Ordered">Parts Ordered</option>
+            <option value="Ready to Build">Ready to Build</option>
+            <option value="Soldering">Soldering</option>
+            <option value="Testing & Calibration">Testing &amp; Calibration</option>
+            <option value="Troubleshooting / On Hold">Troubleshooting / On Hold</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="field">
+          <label for="proj-vendor">PCB / Kit Designer or Vendor</label>
+          <span id="proj-vendor-hint" class="hint">e.g., Befaco, PedalPCB, AI Synthesis, Amazingsynth</span>
+          <input
+            type="text"
+            id="proj-vendor"
+            name="source_vendor"
+            aria-describedby="proj-vendor-hint"
+          >
+        </div>
+
+        <div class="field">
+          <label for="proj-doc-url">Schematic / Build Guide URL</label>
+          <span id="proj-doc-hint" class="hint">Optional link to interactive BOM or PDF manual</span>
+          <input
+            type="url"
+            id="proj-doc-url"
+            name="doc_url"
+            placeholder="https://..."
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-describedby="proj-doc-hint"
+          >
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="proj-notes">Build Notes &amp; Overview</label>
+        <textarea id="proj-notes" name="notes" rows="3"></textarea>
+      </div>
+
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-secondary" data-close-dialog="dialog-project">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Build Project</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL 3: ADD / EDIT BOM LINE & LINK / ALLOCATE -->
+  <dialog id="dialog-bom-line" closedby="any" aria-labelledby="dialog-bom-title">
+    <div class="dialog-header">
+      <h2 id="dialog-bom-title">Add BOM Line to Project</h2>
+      <button type="button" class="btn btn-ghost btn-icon dialog-close-btn" data-close-dialog="dialog-bom-line" aria-label="Close BOM line dialog">&times;</button>
+    </div>
+    <form id="form-bom-line" class="dialog-form" novalidate>
+      <input type="hidden" id="bom-id" name="id">
+
+      <div class="field">
+        <label for="bom-component-select">Link to Inventory Component (Optional — Auto-Matches by Value if left on Auto)</label>
+        <span id="bom-comp-hint" class="hint">Pick an existing component from your bench stock, or let smart matching pair it</span>
+        <select id="bom-component-select" name="component_id" aria-describedby="bom-comp-hint">
+          <option value="">✨ Auto-Match by Value &amp; Footprint (or leave Unlinked)</option>
+        </select>
+      </div>
+
+      <div class="form-grid-3">
+        <div class="field">
+          <label for="bom-designators">PCB Designators</label>
+          <span id="bom-des-hint" class="hint">e.g., R1-R4, U1, C2, J1-J6</span>
+          <input
+            type="text"
+            id="bom-designators"
+            name="designators"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-describedby="bom-des-hint"
+          >
+        </div>
+
+        <div class="field">
+          <label for="bom-value">Value / Part Code *</label>
+          <span id="bom-val-hint" class="hint">e.g., 100k, 100nF, TL072, PJ398SM</span>
+          <input
+            type="text"
+            id="bom-value"
+            name="value"
+            required
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-describedby="bom-val-hint"
+            aria-errormessage="bom-val-error"
+          >
+          <div id="bom-val-error" class="error-msg">Please enter a part value or code.</div>
+        </div>
+
+        <div class="field">
+          <label for="bom-qty-required">Qty Required *</label>
+          <span id="bom-qty-hint" class="hint">Number of units needed</span>
+          <input
+            type="number"
+            id="bom-qty-required"
+            name="qty_required"
+            min="1"
+            step="1"
+            value="1"
+            required
+            aria-describedby="bom-qty-hint"
+          >
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="field">
+          <label for="bom-part-name">Part Description</label>
+          <span id="bom-name-hint" class="hint">e.g., 100kΩ Metal Film Resistor, Dual Op-Amp</span>
+          <input
+            type="text"
+            id="bom-part-name"
+            name="part_name"
+            aria-describedby="bom-name-hint"
+          >
+        </div>
+
+        <div class="field">
+          <label for="bom-footprint">Package / Footprint</label>
+          <span id="bom-fp-hint" class="hint">e.g., SMD 0603, THT Axial 1/4W, DIP-8</span>
+          <input
+            type="text"
+            id="bom-footprint"
+            name="package_footprint"
+            list="footprint-suggestions"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-describedby="bom-fp-hint"
+          >
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="bom-notes">Build / Selection Notes</label>
+        <input
+          type="text"
+          id="bom-notes"
+          name="notes"
+          placeholder="e.g., Match hFE, use C0G dielectric, or mount on panel side..."
+        >
+      </div>
+
+      <div class="field checkbox-row" id="bom-allocate-immediately-row">
+        <input type="checkbox" id="bom-allocate-immediately" name="allocate_immediately" checked>
+        <label for="bom-allocate-immediately">Immediately allocate/reserve available stock for this project</label>
+      </div>
+
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-secondary" data-close-dialog="dialog-bom-line">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save BOM Line</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL 4: ALLOCATE SPECIFIC QUANTITY FOR A BOM LINE -->
+  <dialog id="dialog-allocate" closedby="any" aria-labelledby="dialog-allocate-title">
+    <div class="dialog-header">
+      <h2 id="dialog-allocate-title">Allocate Parts to Project</h2>
+      <button type="button" class="btn btn-ghost btn-icon dialog-close-btn" data-close-dialog="dialog-allocate" aria-label="Close allocation dialog">&times;</button>
+    </div>
+    <form id="form-allocate" class="dialog-form">
+      <input type="hidden" id="alloc-bom-id">
+      <p id="alloc-part-summary" class="dialog-lead"></p>
+
+      <div class="alloc-metrics-box">
+        <div>
+          <span>Required by BOM:</span>
+          <strong id="alloc-req-count">0</strong>
+        </div>
+        <div>
+          <span>Currently Allocated Here:</span>
+          <strong id="alloc-cur-count">0</strong>
+        </div>
+        <div>
+          <span>Unallocated Bench Available:</span>
+          <strong id="alloc-avail-count">0</strong>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="alloc-qty-input">Quantity Reserved for This Project</label>
+        <span id="alloc-qty-hint" class="hint">Reserving parts deducts them from Available stock without reducing Total On Hand until soldered/consumed.</span>
+        <input
+          type="number"
+          id="alloc-qty-input"
+          min="0"
+          step="1"
+          required
+          aria-describedby="alloc-qty-hint"
+        >
+      </div>
+
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-secondary" data-close-dialog="dialog-allocate">Cancel</button>
+        <button type="submit" class="btn btn-primary">Update Allocation</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL 5: CSV IMPORT / EXPORT (INVENTORY OR PROJECT BOM) -->
+  <dialog id="dialog-csv" closedby="any" aria-labelledby="dialog-csv-title">
+    <div class="dialog-header">
+      <h2 id="dialog-csv-title">CSV Import &amp; Export</h2>
+      <button type="button" class="btn btn-ghost btn-icon dialog-close-btn" data-close-dialog="dialog-csv" aria-label="Close CSV dialog">&times;</button>
+    </div>
+    <form id="form-csv" class="dialog-form">
+      <input type="hidden" id="csv-mode" value="inventory">
+
+      <div id="csv-export-box" class="csv-export-panel">
+        <p id="csv-mode-description">Export your full components inventory as CSV, or paste/upload CSV rows below to bulk-import.</p>
+        <button type="button" id="btn-download-csv" class="btn btn-secondary btn-sm">Download Current CSV</button>
+      </div>
+
+      <div class="field">
+        <label for="csv-file-input">Upload CSV File (Optional)</label>
+        <input type="file" id="csv-file-input" accept=".csv,text/csv,text/plain">
+      </div>
+
+      <div class="field">
+        <label for="csv-textarea">Or Paste CSV Rows (Header row supported)</label>
+        <span id="csv-format-hint" class="hint">
+          Inventory columns: <code>Name,Category,Value,Footprint,Specs,Qty,MinQty,Location,Supplier,SKU,UnitCost</code><br>
+          BOM columns: <code>Designators,Value,Part,Footprint,Qty,Notes</code>
+        </span>
+        <textarea
+          id="csv-textarea"
+          rows="7"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-describedby="csv-format-hint"
+        ></textarea>
+      </div>
+
+      <div class="field checkbox-row" id="csv-bom-auto-alloc-row" hidden>
+        <input type="checkbox" id="csv-bom-auto-alloc" checked>
+        <label for="csv-bom-auto-alloc">Automatically match against inventory and allocate available parts</label>
+      </div>
+
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-secondary" data-close-dialog="dialog-csv">Cancel</button>
+        <button type="submit" class="btn btn-primary">Import CSV Rows</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>

@@ -69,17 +69,21 @@ cargo clippy --version
 ```
 
 ### 0.2 Verify Google Cloud CLI (`gcloud`), Active Project & Cloud Run / Firestore Readiness
-Run 3 (**Production Run**) migrates persistence to **Cloud Firestore** and deploys the containerized Rust + HTMX web server to **Cloud Run** (`--min-instances=0`, `us-central1`). Confirm `gcloud` authentication, Application Default Credentials (ADC), and target project APIs before recording so `gcloud` does not pause for interactive browser login mid-cast:
+Run 3 (**Production Run**) migrates persistence to **Cloud Firestore** and deploys the containerized Rust + HTMX web server to **Cloud Run** (`--min-instances=0`, `us-central1`). Confirm `gcloud` authentication, Application Default Credentials (ADC), active project, and target project APIs before recording so `gcloud` does not pause for interactive browser login mid-cast:
 ```bash
 gcloud --version
 gcloud auth list
-gcloud config get-value project
-gcloud services list --enabled --filter="name:(run.googleapis.com OR firestore.googleapis.com OR cloudbuild.googleapis.com OR artifactregistry.googleapis.com)"
+gcloud projects list --format="table(projectId,name,projectNumber)" --limit=20
+gcloud config set core/project <PROJECT_ID> --quiet
+gcloud config get-value core/project
+gcloud services list --enabled --filter="config.name:(run.googleapis.com OR firestore.googleapis.com OR cloudbuild.googleapis.com OR artifactregistry.googleapis.com)" --format="table(config.name,state)" --quiet
 ```
 - If any of `run.googleapis.com`, `firestore.googleapis.com`, `cloudbuild.googleapis.com`, or `artifactregistry.googleapis.com` are not yet enabled on your active project, enable them and ensure a `(default)` Firestore Native database exists in `us-central1`:
   ```bash
-  gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
-  gcloud firestore databases list
+  gcloud services enable run.googleapis.com firestore.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com --quiet
+  gcloud firestore databases list --format="table(name,locationId,type)" --quiet
+  gcloud firestore locations list --filter="locationId:us* OR locationId:nam5" --format="table(locationId,displayName)" --quiet
+  gcloud firestore databases create --location=us-central1 --database="(default)" --type=firestore-native --quiet
   ```
 
 ### 0.3 Verify `asciinema` Version & `--window-size` Flag (`>= 3.0`)
@@ -143,42 +147,38 @@ Complete all four stages for the **Baseline Run** before starting the **Skilled 
 
 ### 2.1 Stage 1 — Record the Baseline Run (`recordings/raw/01-baseline.cast`)
 
-1. **Start `asciinema` in `$EXP_DIR`**:
+1. **Create and enter the target project directory, then start `asciinema`**:
    ```bash
-   cd "$EXP_DIR"
+   mkdir -p "$EXP_DIR/audio_inventory_baseline" && cd "$EXP_DIR/audio_inventory_baseline"
    asciinema rec --window-size 120x32 --idle-time-limit 2.0 --overwrite "$REPO_ROOT/recordings/raw/01-baseline.cast"
    ```
-2. **Create and enter the project directory** inside the recorded shell:
-   ```bash
-   mkdir audio_inventory_baseline && cd audio_inventory_baseline
-   ```
-3. **Start Antigravity in the empty directory** *(no repository skills installed)*:
+2. **Start Antigravity in the empty directory** *(first command in the recording; no repository skills installed)*:
    ```bash
    agy
    ```
-4. **Paste the initial prompt** *(no mention of Google Cloud)*:
+3. **Paste the initial prompt** *(no mention of Google Cloud)*:
    ```text
    I'd like to build a web application to track my audio electronics components inventory and DIY kit builds.
    ```
-5. Answer `agy`'s one-at-a-time clarifying questions using the **Canonical Q&A Answers** table above (letting `agy` pick its default simple local stack such as Python + SQLite).
-6. Let `agy` build the local web application, seed the sample `TL074` / audio **Components** and **Kits**, and verify tests / local server startup.
-7. **Ask `agy` to run or verify the app locally** (if not already verified):
+4. Answer `agy`'s one-at-a-time clarifying questions using the **Canonical Q&A Answers** table above (letting `agy` pick its default simple local stack such as Python + SQLite).
+5. Let `agy` build the local web application, seed the sample `TL074` / audio **Components** and **Kits**, and verify tests / local server startup.
+6. **Ask `agy` to run or verify the app locally** (if not already verified):
    ```text
    Please run the app and verify it works.
    ```
-8. **Start a new `agy` session**:
+7. **Start a new `agy` session**:
    ```text
    /clear
    ```
-9. **Review the codebase**:
+8. **Review the codebase**:
    ```text
    Please review the codebase
    ```
-10. **Ask `agy` to fix the issues surfaced by the review**:
-    ```text
-    please fix
-    ```
-11. Exit `agy` and press `Ctrl+D` (or type `exit`) to finish the `asciinema` recording.
+9. **Ask `agy` to fix the issues surfaced by the review**:
+   ```text
+   please fix
+   ```
+10. Exit `agy` and press `Ctrl+D` (or type `exit`) to finish the `asciinema` recording.
 
 ### 2.2 Stage 2 — Verify the Baseline Run Recording, Traces & App
 
@@ -262,47 +262,43 @@ Complete all four stages for the **Skilled Run** before starting the **Productio
 
 ### 3.1 Stage 1 — Record the Skilled Run (`recordings/raw/02-skilled.cast`)
 
-1. **Start `asciinema` in `$EXP_DIR`**:
+1. **Create and enter the target project directory, then start `asciinema`**:
    ```bash
-   cd "$EXP_DIR"
+   mkdir -p "$EXP_DIR/audio_inventory_skilled" && cd "$EXP_DIR/audio_inventory_skilled"
    asciinema rec --window-size 120x32 --idle-time-limit 2.0 --overwrite "$REPO_ROOT/recordings/raw/02-skilled.cast"
    ```
-2. **Create and enter the project directory** inside the recorded shell:
-   ```bash
-   mkdir audio_inventory_skilled && cd audio_inventory_skilled
-   ```
-3. **Install Matt Pocock's engineering workflow skills**:
+2. **Install Matt Pocock's engineering workflow skills**:
    ```bash
    npx skills@latest add mattpocock/skills
    ```
-4. **Start Antigravity in `audio_inventory_skilled`**:
+3. **Start Antigravity in `audio_inventory_skilled`**:
    ```bash
    agy
    ```
-5. **Prompt Antigravity with `/wayfinder`** *(same prompt as Run 1, no mention of Google Cloud)*:
+4. **Prompt Antigravity with `/wayfinder`** *(same prompt as Run 1, no mention of Google Cloud)*:
    ```text
    /wayfinder I'd like to build a web application to track my audio electronics components inventory and DIY kit builds.
    ```
-6. **Answer questions** using the **Canonical Q&A Answers** table above (specifying **Rust backend (Axum), HTMX frontend, and local Turso (`libSQL`) database behind a clean repository trait seam**, `Local Markdown (.scratch/)`, and `Single context (GLOSSARY.md + docs/adr/)`) until the map and initial decision tickets are created.
-7. **Work through the `/wayfinder` decision tickets** (`/clear` → `/wayfinder` → answer questions → `/clear`) until all `/wayfinder` decision tickets are resolved.
-8. **Complete the specification and build of the app** (`/to-spec` → `/to-tickets` → `/implement`, with `/clear` between stages as appropriate) until the Rust/Axum + HTMX + local Turso (`libSQL`) web application is built and `cargo test` passes.
-9. **Ask `agy` to run and verify the app**:
+5. **Answer questions** using the **Canonical Q&A Answers** table above (specifying **Rust backend (Axum), HTMX frontend, and local Turso (`libSQL`) database behind a clean repository trait seam**, `Local Markdown (.scratch/)`, and `Single context (GLOSSARY.md + docs/adr/)`) until the map and initial decision tickets are created.
+6. **Work through the `/wayfinder` decision tickets** (`/clear` → `/wayfinder` → answer questions → `/clear`) until all `/wayfinder` decision tickets are resolved.
+7. **Complete the specification and build of the app** (`/to-spec` → `/to-tickets` → `/implement`, with `/clear` between stages as appropriate) until the Rust/Axum + HTMX + local Turso (`libSQL`) web application is built and `cargo test` passes.
+8. **Ask `agy` to run and verify the app**:
    ```text
    Please run the app and verify it works.
    ```
-10. **Start a new `agy` session**:
-    ```text
-    /clear
-    ```
-11. **Review the codebase**:
+9. **Start a new `agy` session**:
+   ```text
+   /clear
+   ```
+10. **Review the codebase**:
     ```text
     Please review the codebase
     ```
-12. **Ask `agy` to fix the issues surfaced by the review**:
+11. **Ask `agy` to fix the issues surfaced by the review**:
     ```text
     please fix
     ```
-13. Exit `agy` and press `Ctrl+D` (or `exit`) to save `02-skilled.cast`.
+12. Exit `agy` and press `Ctrl+D` (or `exit`) to save `02-skilled.cast`.
 
 ### 3.2 Stage 2 — Verify the Skilled Run Recording, Traces & App
 
@@ -363,7 +359,7 @@ Audit every stop point in `prototypes/02-skilled-cast-player.html` and refine `r
    python3 "$MARK_SCRIPT" "$REPO_ROOT/recordings/final/02-skilled.cast" --search "/wayfinder|/to-spec|/to-tickets|/implement|/clear" --context 4
    ```
 2. **Audit two-stop prompt/question pairs and `/clear` boundaries**:
-   - Confirm `mkdir`, `npx skills@latest add mattpocock/skills`, and `agy` pause on `[UNREV]` command entry.
+   - Confirm `npx skills@latest add mattpocock/skills` and `agy` pause on `[UNREV]` command entry.
    - Confirm each `/wayfinder` grilling question, slash command (`/wayfinder`, `/to-spec`, `/to-tickets`, `/implement`), and review prompt uses the two-stop pattern (Stop 1: before typing; Stop 2: after typing, before `Enter`), and each `/clear` has its paired `Session Cleared` stop point.
 3. **Update `scripts/markers/02-skilled.json`, re-apply markers, tighten paste delays (`dt`), and re-embed into `prototypes/02-skilled-cast-player.html`**:
    ```bash

@@ -120,6 +120,14 @@ one data reduction flag (`--limit`, `--filter`, or `--format`).
     formats`.
 
 *   **Limiting**: Use `--limit=N` to cap the number of resources returned.
+    *Gotcha (`gcloud services list`)*: `gcloud services list` passes `--limit=N`
+    to `serviceusage.ListServices` **before** client-side `--filter` runs, so
+    combining `--limit=10` with `--filter="config.name:(...)"` only inspects the
+    first 10 enabled APIs alphabetically (e.g., `artifactregistry.googleapis.com`)
+    and drops matching services later in the alphabet (`cloudbuild`, `firestore`,
+    `run`). When filtering `gcloud services list` for specific APIs, use
+    `--filter="config.name:(...)"` and `--format="table(config.name,state)"`
+    without `--limit`.
 
 *   **Filtering**: Use `--filter` to narrow down results server-side. Prioritize
     `:` for pattern matching and never quote the right side of the colon. Treat
@@ -189,8 +197,9 @@ environment, they must explicitly provide project and location scoping.
         unified `locations list` command:
 
         *   `gcloud <GROUP> locations list --project=<PROJECT_ID>`
-        *   *Examples*: `gcloud artifacts locations list`, `gcloud kms locations
-            list`, `gcloud secrets locations list`.
+        *   *Examples*: `gcloud artifacts locations list`, `gcloud firestore
+            locations list --format="table(locationId,displayName)"`, `gcloud kms
+            locations list`, `gcloud secrets locations list`.
 
 ## Safety & Guardrails
 

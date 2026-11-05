@@ -1,34 +1,74 @@
 [
   {
-    "label": "1. Create Project Directory",
-    "pattern": "mkdir(?P<p>\\s+-p)?\\s+audio_inventory_baseline"
+    "label": "1. Launch agy",
+    "pattern": "audio_inventory_baseline.*?a\\x08agy"
   },
   {
-    "label": "2. Launch agy",
-    "pattern": "\\bagy\\b"
+    "label": "2. Ready for Initial Prompt",
+    "pattern": "Gemini 4 Argon \\(Medium\\).*?Gemini 4 Argon"
   },
   {
     "label": "3. Initial Prompt",
     "pattern": "I'd like to build a web application to track my audio electronics components inventory and DIY kit builds"
   },
   {
-    "label": "4. Build Summary",
-    "pattern": "What Was Built|127\\.0\\.0\\.1|localhost:"
+    "label": "4. Q1: Storage & Stack",
+    "pattern": "\\? How would you like your inventory and kit build data to be stored\\?"
   },
   {
-    "label": "5. Clear Session (/clear)",
-    "pattern": "/clear"
+    "label": "5. Q2: Key Features",
+    "pattern": "included for managing components and DIY kit builds\\?\\s*Question"
   },
   {
-    "label": "6. Session Cleared",
-    "pattern": "Antigravity CLI.*?\\? for shortcuts"
+    "label": "6. Q2: Features & Write-In",
+    "pattern": "p[\\x08\\s]*r[\\x08\\s]*o[\\x08\\s]*j[\\x08\\s]*e[\\x08\\s]*c[\\x08\\s]*t"
   },
   {
-    "label": "7. Codebase Review",
+    "label": "7. Q3: Part Allocation Model",
+    "pattern": "waiting on the rest\\)\\s*4\\. Write-in"
+  },
+  {
+    "label": "8. Q4: Audio DIY Focus",
+    "pattern": "This helps tailor the default component categories,\\s+footprints, and fields\\.\\)\\s*Question"
+  },
+  {
+    "label": "9. Q4: Options Selected",
+    "pattern": "> 2\\. \\[x\\] \\(Recommended\\) Guitar Pedals / Stompboxes"
+  },
+  {
+    "label": "10. Build Summary",
+    "pattern": "st not be hidden via aria-hidden=\"true\"\"\\)\\.\\s*\\? for shortcuts"
+  },
+  {
+    "label": "11. Clear Session (/clear)",
+    "pattern": "r\\s+Clear conversation and start a new one\\s+/firebase:firebase-security-rules-auditor"
+  },
+  {
+    "label": "12. Session Cleared",
+    "pattern": "Antigravity CLI 1\\.5\\.1.*?Gemini 4 Argon \\(Medium\\).*?audio_inventory_baseline"
+  },
+  {
+    "label": "13. Codebase Review Prompt",
     "pattern": "Please review the codebase"
   },
   {
-    "label": "8. Apply Review Fixes",
-    "pattern": "please fix|p\\s*Gleasefix"
+    "label": "14. Review Findings",
+    "pattern": "calculation\\)\\?\\s*\\? for shortcuts"
+  },
+  {
+    "label": "15. Apply Review Fixes",
+    "pattern": "p\\s+Glease\\s*fix"
+  },
+  {
+    "label": "16. Fixes Verified",
+    "pattern": "app\\.js#L900-L958.*?\\? for shortcuts"
+  },
+  {
+    "label": "17. Browser Test Prompt",
+    "pattern": "p\\s+Glease\\s*test\\s*this\\s*site\\s*in\\s*a\\s*web\\s*browser"
+  },
+  {
+    "label": "18. Browser Verification Complete",
+    "pattern": "jk46d956b60a8d6c01.*?\\? for shortcuts"
   }
 ]

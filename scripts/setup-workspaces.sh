@@ -83,11 +83,12 @@ sync_single_experiment() {
   local src="$DEMOS_ROOT/$proj"
   local dst="$EXPERIMENTS_DIR/$proj"
   if [[ -d "$src" ]]; then
-    echo "=== Syncing $proj -> $dst (excluding target/, .venv/, __pycache__/, .git/) ==="
+    echo "=== Syncing $proj -> $dst (excluding target/, .venv/, node_modules/, __pycache__/, .git/) ==="
     mkdir -p "$dst"
-    rsync -a --delete \
+    rsync -a --delete --delete-excluded \
       --exclude 'target/' \
       --exclude '.venv/' \
+      --exclude 'node_modules/' \
       --exclude '__pycache__/' \
       --exclude '.git/' \
       "$src/" "$dst/"

@@ -29,6 +29,50 @@ def clean_path_str(p_val: Any) -> str | None:
     return val if val else None
 
 
+_COMMON_SUBDIRS = {
+    "src",
+    "lib",
+    "bin",
+    "test",
+    "tests",
+    "scripts",
+    "public",
+    "static",
+    "templates",
+    "data",
+    "views",
+    "assets",
+    "dist",
+    "build",
+    "routes",
+    "components",
+}
+
+
+def _is_temp_or_internal_path(p_str: str) -> bool:
+    home_gemini = str(Path.home() / ".gemini")
+    return (
+        p_str.startswith(home_gemini)
+        or p_str.startswith("/tmp")
+        or p_str.startswith("/private/tmp")
+        or p_str.startswith("/var/folders")
+        or p_str.startswith("/private/var/folders")
+    )
+
+
+def _normalize_workspace_dir(dir_path: Path) -> str:
+    home = Path.home()
+    for parent in (dir_path, *dir_path.parents):
+        if parent != home and (parent / ".agents").is_dir():
+            return str(parent)
+    for parent in (dir_path, *dir_path.parents):
+        if parent != home and (parent / ".git").is_dir():
+            return str(parent)
+    if dir_path.name in _COMMON_SUBDIRS and len(dir_path.parents) > 1 and dir_path.parent != home:
+        return str(dir_path.parent)
+    return str(dir_path)
+
+
 def extract_workspace_from_tool_call(tc: dict[str, Any]) -> str | None:
     """Infer workspace or project root directory from a single tool call."""
     args = tc.get("args", {})
@@ -37,32 +81,20 @@ def extract_workspace_from_tool_call(tc: dict[str, Any]) -> str | None:
 
     # 1. Cwd in run_command or other tools
     cwd = clean_path_str(args.get("Cwd"))
-    if cwd and cwd != ".":
-        return cwd
+    if cwd and cwd != "." and not _is_temp_or_internal_path(cwd):
+        return _normalize_workspace_dir(Path(cwd))
 
     # 2. DirectoryPath in list_dir
     if tc.get("name") == "list_dir":
         dp = clean_path_str(args.get("DirectoryPath"))
-        if dp and dp != ".":
-            home_gemini = str(Path.home() / ".gemini")
-            if not dp.startswith(home_gemini) and not dp.startswith("/tmp"):
-                return dp
+        if dp and dp != "." and not _is_temp_or_internal_path(dp):
+            return _normalize_workspace_dir(Path(dp))
 
     # 3. AbsolutePath / TargetFile / Path
     for k in ("AbsolutePath", "TargetFile", "Path"):
         val = clean_path_str(args.get(k))
-        if val and val.startswith("/"):
-            home = Path.home()
-            home_gemini = str(home / ".gemini")
-            if not val.startswith(home_gemini) and not val.startswith("/tmp"):
-                p = Path(val)
-                for parent in p.parents:
-                    if parent != home and (parent / ".agents").is_dir():
-                        return str(parent)
-                for parent in p.parents:
-                    if parent != home and (parent / ".git").is_dir():
-                        return str(parent)
-                return str(p.parent)
+        if val and val.startswith("/") and not _is_temp_or_internal_path(val):
+            return _normalize_workspace_dir(Path(val).parent)
 
     return None
 
@@ -76,7 +108,7 @@ def get_project_name(workspace: str | None) -> str:
         return "(no workspace)"
     p = Path(clean)
     name = p.name
-    if name in ("src", "lib", "bin", "test", "tests", "scripts") and len(p.parents) > 1:
+    if name in _COMMON_SUBDIRS and len(p.parents) > 1:
         name = p.parent.name
     return name or clean
 
@@ -475,6 +507,25 @@ def discover_traces(
                             ws_path = extract_workspace_from_tool_call(tc)
                             if ws_path:
                                 break
+
+            if ws_path is None and t_file != t_full and t_full.exists():
+                with (
+                    contextlib.suppress(
+                        json.JSONDecodeError, OSError, UnicodeDecodeError
+                    ),
+                    open(t_full, encoding="utf-8") as ff,
+                ):
+                    for line in ff:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        d = json.loads(line)
+                        for tc in d.get("tool_calls", []):
+                            ws_path = extract_workspace_from_tool_call(tc)
+                            if ws_path:
+                                break
+                        if ws_path:
+                            break
 
             clean_full_req = (user_req or "(none)").replace("\n", " ").strip()
             if query and query.lower() not in clean_full_req.lower():

@@ -1,42 +1,38 @@
 [
   {
-    "label": "1. Create Project Directory",
-    "pattern": "mkdir(?P<p>\\s+-p)?\\s+audio_inventory_skilled"
-  },
-  {
-    "label": "2. Install Matt Pocock Skills",
+    "label": "1. Install Matt Pocock Skills",
     "pattern": "npx skills@latest add mattpocock/skills"
   },
   {
-    "label": "3. Launch agy",
+    "label": "2. Launch agy",
     "pattern": "\\bagy\\b"
   },
   {
-    "label": "4. /wayfinder (Chart Map)",
+    "label": "3. /wayfinder (Chart Map)",
     "pattern": "/wayfinder\\s+I'd like to build a web application to track my audio electronics components inventory and DIY kit builds"
   },
   {
-    "label": "5. /to-spec",
+    "label": "4. /to-spec",
     "pattern": "/to-spec"
   },
   {
-    "label": "6. /to-tickets",
+    "label": "5. /to-tickets",
     "pattern": "/to-tickets"
   },
   {
-    "label": "7. /implement",
+    "label": "6. /implement",
     "pattern": "/implement"
   },
   {
-    "label": "8. Clear Session (/clear)",
+    "label": "7. Clear Session (/clear)",
     "pattern": "/clear"
   },
   {
-    "label": "9. Codebase Review",
+    "label": "8. Codebase Review",
     "pattern": "Please review the codebase"
   },
   {
-    "label": "10. Apply Review Fixes",
+    "label": "9. Apply Review Fixes",
     "pattern": "please fix|p\\s*Gleasefix"
   }
 ]

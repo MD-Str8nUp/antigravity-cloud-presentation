@@ -148,17 +148,26 @@ dev, staging, prod):
 
 Properties set default values for flags across `gcloud` invocations:
 
--   **Set active project:**
+-   **List available projects to find a project ID:**
 
     ```bash
-    gcloud config set core/project {project_id}
+    gcloud projects list --format="table(projectId,name,projectNumber)" --limit=20
     ```
 
--   **Set default compute region and zone:**
+-   **Set and verify active project (and ADC quota project):**
 
     ```bash
-    gcloud config set compute/region {region}
-    gcloud config set compute/zone {zone}
+    gcloud config set core/project {project_id} --quiet
+    gcloud config get-value core/project
+    gcloud auth application-default set-quota-project {project_id} --quiet
+    ```
+
+-   **Set default compute or Cloud Run region and zone:**
+
+    ```bash
+    gcloud config set compute/region {region} --quiet
+    gcloud config set compute/zone {zone} --quiet
+    gcloud config set run/region {region} --quiet
     ```
 
 -   **View all active configuration properties:**
