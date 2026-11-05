@@ -823,6 +823,21 @@ def main() -> int:
         ),
     )
     parser.add_argument(
+        "--auto-baseline",
+        action="store_true",
+        help="Auto-inject canonical markers for Run 1 (scripts/markers/01-baseline.json)",
+    )
+    parser.add_argument(
+        "--auto-skilled",
+        action="store_true",
+        help="Auto-inject canonical markers for Run 2 (scripts/markers/02-skilled.json)",
+    )
+    parser.add_argument(
+        "--auto-production",
+        action="store_true",
+        help="Auto-inject canonical markers for Run 3 (scripts/markers/03-production.json)",
+    )
+    parser.add_argument(
         "--add-pattern",
         nargs=2,
         action="append",
@@ -899,12 +914,22 @@ def main() -> int:
 
     header, events, version = load_cast(args.input)
 
+    repo_root = Path(__file__).resolve().parents[4]
+    auto_spec_path = args.auto_spec
+    if not auto_spec_path:
+        if args.auto_baseline:
+            auto_spec_path = str(repo_root / "scripts" / "markers" / "01-baseline.json")
+        elif args.auto_skilled:
+            auto_spec_path = str(repo_root / "scripts" / "markers" / "02-skilled.json")
+        elif args.auto_production:
+            auto_spec_path = str(repo_root / "scripts" / "markers" / "03-production.json")
+
     mutating = bool(
         args.clear
         or args.remove
         or args.set
         or args.relabel
-        or args.auto_spec
+        or auto_spec_path
         or args.add_pattern
         or args.add_time
         or args.add_event
@@ -955,8 +980,8 @@ def main() -> int:
             )
             print(f"[set] {msg}")
 
-    if args.auto_spec:
-        spec_markers = load_auto_spec(args.auto_spec)
+    if auto_spec_path:
+        spec_markers = load_auto_spec(auto_spec_path)
         events, notes = auto_inject_markers(
             header,
             events,

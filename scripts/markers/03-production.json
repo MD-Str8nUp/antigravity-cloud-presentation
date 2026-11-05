@@ -1,0 +1,30 @@
+[
+  {
+    "label": "1. Install Google Cloud Skills",
+    "pattern": "npx skills@latest add google/skills"
+  },
+  {
+    "label": "2. Launch agy",
+    "pattern": "\\bagy\\b"
+  },
+  {
+    "label": "3. /wayfinder (Cloud Migration Map)",
+    "pattern": "/wayfinder\\s+I'd like to adapt and productionize this web application for a low-volume, low-cost deployment on Google Cloud using Cloud Run and Cloud Firestore"
+  },
+  {
+    "label": "4. /to-spec (Cloud Architecture Spec)",
+    "pattern": "/to-spec"
+  },
+  {
+    "label": "5. /to-tickets (Migration Slices)",
+    "pattern": "/to-tickets"
+  },
+  {
+    "label": "6. /implement (Firestore & Cloud Run)",
+    "pattern": "/implement"
+  },
+  {
+    "label": "7. Live Cloud Run Deployment",
+    "pattern": "gcloud run deploy|\\.run\\.app"
+  }
+]
