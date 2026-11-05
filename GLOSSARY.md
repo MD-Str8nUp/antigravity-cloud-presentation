@@ -5,30 +5,34 @@ This repository orchestrates a three-run recorded experiment comparing how Antig
 ## Experiment Runs
 
 **Baseline Run**:
-Run 1 of the experiment, where `agy` builds the web system from an initial prompt guided only by the user's global rule (`When something is unclear, please ask clarifying questions, one at a time.`) with no repository skills installed.
+Run 1 of the experiment, where the agent builds a local web application from an initial prompt guided only by the user's global clarifying-question rule with no repository skills installed.
 _Avoid_: Unskilled run, vanilla run
 
-**Spec Run**:
-Run 2 of the experiment, where `agy` uses `mattpocock/skills` (`/wayfinder` through `/to-spec`) to organize requirements, model the domain, and produce a specification as its final output without implementing code.
-_Avoid_: Skilled run, planning run
+**Skilled Run**:
+Run 2 of the experiment, where the agent uses engineering workflow skills to model the domain, specify requirements, slice work into tickets, and build a verified local web application.
+_Avoid_: Spec run, planning run
 
-**Implementation Run**:
-Run 3 of the experiment, cloned from the completed Spec Run with `google/skills` added, where `agy` shapes the specification into tickets (`/to-tickets`) informed by Google Cloud skills and implements the running web system (`/implement`).
-_Avoid_: Comprehension run, Run 3
+**Production Run**:
+Run 3 of the experiment, cloned from the completed Skilled Run with cloud skills added, where the agent adapts and productionizes the local web application for cloud deployment.
+_Avoid_: Implementation run, comprehension run, Run 3
 
 ## Recording & Artifacts
 
 **Terminal Cast**:
-An `asciinema` `.cast` recording of an experiment run, captured in `recordings/raw/` and sanitized with chapter stop-point markers in `recordings/final/`.
+A terminal recording of an experiment run, captured as a raw recording and sanitized with chapter stop-point markers for playback.
 _Avoid_: Video, screen recording
 
 **Session Trace**:
-The exported Markdown conversation log from Antigravity's brain directory for each session within an experiment run, stored under `artifacts/traces/`.
+The exported conversation log from the agent's session storage for each session within an experiment run.
 _Avoid_: Chat history, transcript dump
 
 **Canonical Q&A**:
-The pre-scripted set of operator answers used across runs when `agy` asks clarifying questions, ensuring consistent domain requirements between the Baseline Run and the Spec Run.
+The pre-scripted set of operator answers used across runs when the agent asks clarifying questions, ensuring consistent domain requirements.
 _Avoid_: Cheat sheet, prompt script
+
+**Codelab**:
+An interactive lesson that walks learners through the recorded experiment runs using the captured Terminal Casts, Session Traces, and resulting codebases.
+_Avoid_: Tutorial page, handout, lab doc
 
 ## Subject Domain (Audio Electronics Inventory)
 
