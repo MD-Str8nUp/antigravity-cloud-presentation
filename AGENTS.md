@@ -2,7 +2,7 @@
 
 ### Issue tracker
 
-Issues and specs are tracked in GitHub Issues (`domesticmouse/antigravity-cloud-presentation`) using the `gh` CLI. See `docs/agents/issue-tracker.md`.
+Issues and specs are tracked in GitHub Issues (`domesticmouse/antigravity-cloud-presentation`) using the `gh` CLI (escalated outside the sandbox via `BypassSandbox: true`). See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
