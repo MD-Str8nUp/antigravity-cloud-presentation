@@ -373,6 +373,18 @@ function findSegmentIndexAtTime(playTimeSec: number): number {
 }
 
 let lastPolledTime = -1
+let isSeeking = false
+
+function hasTrailingSegment(): boolean {
+  return (
+    segments.value.length > chapters.value.length &&
+    segments.value[segments.value.length - 1].warpedDuration > 0.05
+  )
+}
+
+function getEndStopIndex(): number {
+  return hasTrailingSegment() ? chapters.value.length : Math.max(0, chapters.value.length - 1)
+}
 
 function findChapterAtTime(playTimeSec: number, toleranceSec = 0.05): number {
   for (let i = 0; i < chapters.value.length; i++) {
@@ -387,35 +399,45 @@ function applyEndState(reason: 'ended' | 'jumped' = 'jumped') {
   const tailSegIdx = Math.max(0, segments.value.length - 1)
   const tailSeg = segments.value[tailSegIdx]
   const endTime = tailSeg ? tailSeg.endTime : 0
-  activeChapterIdx.value = chapters.value.length
-  hitChapterIdx.value = chapters.value.length
+  const endStopIdx = getEndStopIndex()
+  activeChapterIdx.value = endStopIdx
+  hitChapterIdx.value = endStopIdx
   currentSegmentIdx.value = tailSegIdx
   isPlaying.value = false
   lastPolledTime = endTime
+  const lastChapter = chapters.value[chapters.value.length - 1]
+  const endLabel =
+    !hasTrailingSegment() && lastChapter
+      ? lastChapter.label
+      : tailSeg
+        ? tailSeg.toLabel
+        : 'Recording Complete'
   statusText.value =
     reason === 'ended'
-      ? `⏹ End: ${tailSeg ? tailSeg.toLabel : 'Recording Complete'}`
-      : `⏸ End: ${tailSeg ? tailSeg.toLabel : 'Recording Complete'}`
+      ? `⏹ End: ${endLabel}`
+      : `⏸ Stop Point ${endStopIdx + 1}/${chapters.value.length}: ${endLabel} (End)`
   statusMode.value = 'paused-marker'
 }
 
 async function syncLiveSpeedFromPlayer() {
-  if (!playerInstance || typeof playerInstance.getCurrentTime !== 'function') return
+  if (!playerInstance || isSeeking || typeof playerInstance.getCurrentTime !== 'function') return
   try {
     const t = await playerInstance.getCurrentTime()
     if (typeof t !== 'number' || Number.isNaN(t)) return
     const tailSeg = segments.value[segments.value.length - 1]
     const timeChanged = Math.abs(t - lastPolledTime) >= 0.005
+    const endStopIdx = getEndStopIndex()
+
+    if (!isPlaying.value && !timeChanged) return
 
     if (tailSeg && t >= tailSeg.endTime - 0.02) {
-      if (activeChapterIdx.value !== chapters.value.length || isPlaying.value) {
+      if (activeChapterIdx.value !== endStopIdx || isPlaying.value) {
         applyEndState(isPlaying.value ? 'ended' : 'jumped')
       }
       lastPolledTime = t
       return
     }
 
-    if (!isPlaying.value && !timeChanged) return
     lastPolledTime = t
 
     if (isPlaying.value) {
@@ -458,55 +480,74 @@ async function syncLiveSpeedFromPlayer() {
 
 async function jumpToStart() {
   if (!playerInstance) return
-  activeChapterIdx.value = -1
-  hitChapterIdx.value = -1
-  currentSegmentIdx.value = 0
-  if (isPlaying.value && props.pauseOnMarkers) {
-    await playerInstance.pause()
-    isPlaying.value = false
+  isSeeking = true
+  try {
+    activeChapterIdx.value = -1
+    hitChapterIdx.value = -1
+    currentSegmentIdx.value = 0
+    if (isPlaying.value && props.pauseOnMarkers) {
+      await playerInstance.pause()
+      isPlaying.value = false
+    }
+    await playerInstance.seek(0)
+    lastPolledTime = 0
+    const firstSpeed = segments.value[0]?.speed ?? props.speed
+    if (isPlaying.value) {
+      statusText.value = `Playing (${firstSpeed}x)`
+      statusMode.value = 'playing'
+    } else {
+      statusText.value = `Ready at 0. Start · Next: ${firstSpeed}x`
+      statusMode.value = ''
+    }
+  } finally {
+    isSeeking = false
   }
-  const firstSpeed = segments.value[0]?.speed ?? props.speed
-  if (isPlaying.value) {
-    statusText.value = `Playing (${firstSpeed}x)`
-    statusMode.value = 'playing'
-  } else {
-    statusText.value = `Ready at 0. Start · Next: ${firstSpeed}x`
-    statusMode.value = ''
-  }
-  lastPolledTime = 0
-  await playerInstance.seek(0)
 }
 
 async function jumpToChapter(idx: number) {
   if (!playerInstance || idx < 0 || idx >= chapters.value.length) return
-  activeChapterIdx.value = idx
-  const ch = chapters.value[idx]
-  if (isPlaying.value && props.pauseOnMarkers) {
-    await playerInstance.pause()
-    isPlaying.value = false
+  if (!hasTrailingSegment() && idx === chapters.value.length - 1) {
+    await jumpToEnd()
+    return
   }
-  hitChapterIdx.value = isPlaying.value ? -1 : idx
-  currentSegmentIdx.value = Math.min(segments.value.length - 1, idx + 1)
-  if (isPlaying.value) {
-    statusText.value = `Playing (${ch.nextSpeed}x)`
-    statusMode.value = 'playing'
-  } else {
-    statusText.value = `⏸ Stop Point ${idx + 1}/${chapters.value.length}: ${ch.label} · Next: ${ch.nextSpeed}x`
-    statusMode.value = 'paused-marker'
+  isSeeking = true
+  try {
+    activeChapterIdx.value = idx
+    const ch = chapters.value[idx]
+    if (isPlaying.value && props.pauseOnMarkers) {
+      await playerInstance.pause()
+      isPlaying.value = false
+    }
+    await playerInstance.seek(ch.playTime)
+    lastPolledTime = ch.playTime
+    hitChapterIdx.value = isPlaying.value ? -1 : idx
+    currentSegmentIdx.value = Math.min(segments.value.length - 1, idx + 1)
+    if (isPlaying.value) {
+      statusText.value = `Playing (${ch.nextSpeed}x)`
+      statusMode.value = 'playing'
+    } else {
+      statusText.value = `⏸ Stop Point ${idx + 1}/${chapters.value.length}: ${ch.label} · Next: ${ch.nextSpeed}x`
+      statusMode.value = 'paused-marker'
+    }
+  } finally {
+    isSeeking = false
   }
-  lastPolledTime = ch.playTime
-  await playerInstance.seek(ch.playTime)
 }
 
 async function jumpToEnd() {
   if (!playerInstance || !segments.value.length) return
-  const tailSeg = segments.value[segments.value.length - 1]
-  if (isPlaying.value && props.pauseOnMarkers) {
-    await playerInstance.pause()
-    isPlaying.value = false
+  isSeeking = true
+  try {
+    const tailSeg = segments.value[segments.value.length - 1]
+    if (isPlaying.value && props.pauseOnMarkers) {
+      await playerInstance.pause()
+      isPlaying.value = false
+    }
+    await playerInstance.seek(tailSeg.endTime)
+    applyEndState('jumped')
+  } finally {
+    isSeeking = false
   }
-  applyEndState('jumped')
-  await playerInstance.seek(tailSeg.endTime)
 }
 
 async function togglePlay() {
@@ -514,12 +555,17 @@ async function togglePlay() {
   if (isPlaying.value) {
     playerInstance.pause()
   } else {
-    if (activeChapterIdx.value >= chapters.value.length && chapters.value.length > 0) {
-      activeChapterIdx.value = -1
-      hitChapterIdx.value = -1
-      currentSegmentIdx.value = 0
-      lastPolledTime = 0
-      await playerInstance.seek(0)
+    if (activeChapterIdx.value >= getEndStopIndex() && chapters.value.length > 0) {
+      isSeeking = true
+      try {
+        activeChapterIdx.value = -1
+        hitChapterIdx.value = -1
+        currentSegmentIdx.value = 0
+        lastPolledTime = 0
+        await playerInstance.seek(0)
+      } finally {
+        isSeeking = false
+      }
     }
     playerInstance.play()
   }
@@ -530,7 +576,8 @@ function stepPrevChapter() {
   if (activeChapterIdx.value <= 0) {
     jumpToStart()
   } else {
-    jumpToChapter(Math.min(chapters.value.length - 1, activeChapterIdx.value - 1))
+    const targetIdx = Math.min(getEndStopIndex(), activeChapterIdx.value) - 1
+    jumpToChapter(targetIdx)
   }
 }
 
@@ -622,7 +669,7 @@ async function initPlayer() {
 
     playerInstance.addEventListener('play', () => {
       isPlaying.value = true
-      if (activeChapterIdx.value >= chapters.value.length) {
+      if (activeChapterIdx.value >= getEndStopIndex()) {
         activeChapterIdx.value = -1
         currentSegmentIdx.value = 0
       }
@@ -639,11 +686,12 @@ async function initPlayer() {
 
     playerInstance.addEventListener('pause', async () => {
       isPlaying.value = false
+      if (isSeeking) return
       const tailSeg = segments.value[segments.value.length - 1]
       if (tailSeg && typeof playerInstance?.getCurrentTime === 'function') {
         try {
           const t = await playerInstance.getCurrentTime()
-          if (typeof t === 'number' && t >= tailSeg.endTime - 0.05) {
+          if (!isSeeking && typeof t === 'number' && t >= tailSeg.endTime - 0.05) {
             applyEndState('ended')
             return
           }
@@ -656,6 +704,10 @@ async function initPlayer() {
     })
 
     playerInstance.addEventListener('marker', ({ index, time, label }: { index: number; time: number; label: string }) => {
+      if (!hasTrailingSegment() && index >= chapters.value.length - 1) {
+        applyEndState('ended')
+        return
+      }
       activeChapterIdx.value = index
       lastPolledTime = time
       const nextSeg = segments.value[Math.min(segments.value.length - 1, index + 1)]
@@ -763,7 +815,7 @@ watch(
             <span class="chapter-time">{{ formatTime(ch.playTime) }}</span>
           </button>
           <button
-            v-if="segments.length > chapters.length"
+            v-if="hasTrailingSegment()"
             type="button"
             class="chapter-pill"
             :class="{
@@ -788,7 +840,7 @@ watch(
             ◀ Prev
           </button>
           <button type="button" class="ctrl-btn ctrl-btn-primary" title="Play / Resume (p)" @click="togglePlay">
-            {{ isPlaying ? '⏸ Pause' : activeChapterIdx >= chapters.length && chapters.length > 0 ? '↺ Replay' : '▶ Resume' }}
+            {{ isPlaying ? '⏸ Pause' : activeChapterIdx >= getEndStopIndex() && chapters.length > 0 ? '↺ Replay' : '▶ Resume' }}
           </button>
           <button type="button" class="ctrl-btn" title="Next Stop Point (])" @click="stepNextChapter">
             Next ▶
