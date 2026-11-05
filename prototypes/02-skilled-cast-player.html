@@ -704,7 +704,7 @@
       });
 
       // If there is a trailing segment after the last marker, render an interactive End stop-point pill
-      if (segments.length > chapters.length) {
+      if (hasTrailingSegment()) {
         const endIdx = chapters.length;
         const tailSeg = segments[segments.length - 1];
         const tier = getSpeedTierClass(tailSeg.speed, minSpeed);
@@ -723,6 +723,16 @@
 
     let currentStatusMode = "";
     let lastPolledTime = -1;
+    let isSeeking = false;
+
+    function hasTrailingSegment() {
+      return segments.length > chapters.length &&
+        segments[segments.length - 1].warpedDuration > 0.05;
+    }
+
+    function getEndStopIndex() {
+      return hasTrailingSegment() ? chapters.length : Math.max(0, chapters.length - 1);
+    }
 
     function setStatus(text, mode = "") {
       currentStatusMode = mode;
@@ -732,7 +742,7 @@
       const playBtn = document.getElementById("play-btn");
       if (isPlaying) {
         playBtn.textContent = "⏸ Pause";
-      } else if (activeChapterIdx >= chapters.length && chapters.length > 0) {
+      } else if (activeChapterIdx >= getEndStopIndex() && chapters.length > 0) {
         playBtn.textContent = "↺ Replay";
       } else if (activeChapterIdx === -1 && lastPolledTime <= 0.02) {
         playBtn.textContent = "▶ Play";
@@ -746,88 +756,111 @@
       const tailSeg = segments[tailSegIdx];
       const endTime = tailSeg ? tailSeg.endTime : 0;
       const minSpeed = Number(document.getElementById("min-speed-select").value) || 2;
-      activeChapterIdx = chapters.length;
+      const endStopIdx = getEndStopIndex();
+      activeChapterIdx = endStopIdx;
       isPlaying = false;
       lastPolledTime = endTime;
-      renderChapterPills(chapters.length);
+      renderChapterPills(endStopIdx);
+      const lastChapter = chapters[chapters.length - 1];
+      const endLabel = !hasTrailingSegment() && lastChapter
+        ? lastChapter.label
+        : (tailSeg ? tailSeg.toLabel : "Recording Complete");
       if (tailSeg) {
         updateSpeedIndicators(
           tailSegIdx,
           reason === "ended"
             ? `End of Recording (${formatTime(endTime)} · finished @ ${tailSeg.speed}x)`
-            : `End of Recording (${formatTime(endTime)})`
+            : `Stop Point ${endStopIdx + 1}/${chapters.length}: "${endLabel}" (End)`
         );
       }
       setStatus(
         reason === "ended"
-          ? `⏹ End: ${tailSeg ? tailSeg.toLabel : "Recording Complete"}`
-          : `⏸ End: ${tailSeg ? tailSeg.toLabel : "Recording Complete"}`,
+          ? `⏹ End: ${endLabel}`
+          : `⏸ Stop Point ${endStopIdx + 1}/${chapters.length}: ${endLabel} (End)`,
         "paused-marker"
       );
-      const lastChapterLabel = chapters[chapters.length - 1]?.label || "0. Start";
       const rawEnd = tailSeg && tailSeg.rawEndTime ? ` / ${formatTime(tailSeg.rawEndTime)} raw` : "";
       document.getElementById("marker-detail").textContent =
         reason === "ended"
-          ? `Reached End of Recording (${formatTime(endTime)} warped${rawEnd}) — finished Segment ${segments.length}/${segments.length} (${lastChapterLabel} → End @ ${tailSeg ? tailSeg.speed : minSpeed}x). Press [ for previous stop point or p to replay.`
-          : `End of Recording (${formatTime(endTime)} warped${rawEnd}) — final frame after "${lastChapterLabel}" (Segment ${segments.length}/${segments.length} @ ${tailSeg ? tailSeg.speed : minSpeed}x). Press [ for previous stop point.`;
+          ? `Reached End of Recording at "${endLabel}" (${formatTime(endTime)} warped${rawEnd}) — finished Segment ${segments.length}/${segments.length} (@ ${tailSeg ? tailSeg.speed : minSpeed}x). Press [ for previous stop point or p to replay.`
+          : `End of Recording at "${endLabel}" (${formatTime(endTime)} warped${rawEnd}) — final stop point (Segment ${segments.length}/${segments.length} @ ${tailSeg ? tailSeg.speed : minSpeed}x). Press [ for previous stop point or p to replay.`;
     }
 
     async function jumpToStart() {
       if (!player) return;
-      activeChapterIdx = -1;
-      const pauseOnMarkers = document.getElementById("pause-markers-chk").checked;
-      if (isPlaying && pauseOnMarkers) {
-        await player.pause();
-        isPlaying = false;
+      isSeeking = true;
+      try {
+        activeChapterIdx = -1;
+        const pauseOnMarkers = document.getElementById("pause-markers-chk").checked;
+        if (isPlaying && pauseOnMarkers) {
+          await player.pause();
+          isPlaying = false;
+        }
+        await player.seek(0);
+        lastPolledTime = 0;
+        renderChapterPills(-1);
+        updateSpeedIndicators(0, "At 0. Start (00:00)");
+        const firstSpeed = segments[0] ? segments[0].speed : 2;
+        if (isPlaying) {
+          setStatus(`Playing (${firstSpeed}x)`, "playing");
+        } else {
+          setStatus(`Ready at 0. Start · Next: ${firstSpeed}x`, "");
+        }
+        document.getElementById("marker-detail").textContent =
+          `Jumped to 0. Start (00:00) — Segment 1 runs at ${firstSpeed}x.`;
+      } finally {
+        isSeeking = false;
       }
-      lastPolledTime = 0;
-      renderChapterPills(-1);
-      updateSpeedIndicators(0, "At 0. Start (00:00)");
-      const firstSpeed = segments[0] ? segments[0].speed : 2;
-      if (isPlaying) {
-        setStatus(`Playing (${firstSpeed}x)`, "playing");
-      } else {
-        setStatus(`Ready at 0. Start · Next: ${firstSpeed}x`, "");
-      }
-      document.getElementById("marker-detail").textContent =
-        `Jumped to 0. Start (00:00) — Segment 1 runs at ${firstSpeed}x.`;
-      await player.seek(0);
     }
 
     async function jumpToChapter(idx) {
       if (!player || idx < 0 || idx >= chapters.length) return;
-      activeChapterIdx = idx;
-      const ch = chapters[idx];
-      const pauseOnMarkers = document.getElementById("pause-markers-chk").checked;
-      if (isPlaying && pauseOnMarkers) {
-        await player.pause();
-        isPlaying = false;
+      if (!hasTrailingSegment() && idx === chapters.length - 1) {
+        await jumpToEnd();
+        return;
       }
-      lastPolledTime = ch.playTime;
-      renderChapterPills(isPlaying ? -1 : idx);
-      // Jumping to marker idx positions playback at the start of segment idx + 1
-      const nextSegIdx = Math.min(segments.length - 1, idx + 1);
-      updateSpeedIndicators(nextSegIdx, `Stop Point ${idx + 1}/${chapters.length}: "${ch.label}"`);
-      if (isPlaying) {
-        setStatus(`Playing (${ch.nextSpeed}x)`, "playing");
-      } else {
-        setStatus(`⏸ Stop Point ${idx + 1}/${chapters.length}: ${ch.label} · Next: ${ch.nextSpeed}x`, "paused-marker");
+      isSeeking = true;
+      try {
+        activeChapterIdx = idx;
+        const ch = chapters[idx];
+        const pauseOnMarkers = document.getElementById("pause-markers-chk").checked;
+        if (isPlaying && pauseOnMarkers) {
+          await player.pause();
+          isPlaying = false;
+        }
+        await player.seek(ch.playTime);
+        lastPolledTime = ch.playTime;
+        renderChapterPills(isPlaying ? -1 : idx);
+        // Jumping to marker idx positions playback at the start of segment idx + 1
+        const nextSegIdx = Math.min(segments.length - 1, idx + 1);
+        updateSpeedIndicators(nextSegIdx, `Stop Point ${idx + 1}/${chapters.length}: "${ch.label}"`);
+        if (isPlaying) {
+          setStatus(`Playing (${ch.nextSpeed}x)`, "playing");
+        } else {
+          setStatus(`⏸ Stop Point ${idx + 1}/${chapters.length}: ${ch.label} · Next: ${ch.nextSpeed}x`, "paused-marker");
+        }
+        document.getElementById("marker-detail").textContent =
+          `Stop Point ${idx + 1}/${chapters.length}: "${ch.label}" (${formatTime(ch.playTime)} warped / ${formatTime(ch.rawTime)} raw) — next segment runs at ${ch.nextSpeed}x`;
+      } finally {
+        isSeeking = false;
       }
-      document.getElementById("marker-detail").textContent =
-        `Stop Point ${idx + 1}/${chapters.length}: "${ch.label}" (${formatTime(ch.playTime)} warped / ${formatTime(ch.rawTime)} raw) — next segment runs at ${ch.nextSpeed}x`;
-      await player.seek(ch.playTime);
     }
 
     async function jumpToEnd() {
       if (!player || !segments.length) return;
-      const tailSeg = segments[segments.length - 1];
-      const pauseOnMarkers = document.getElementById("pause-markers-chk").checked;
-      if (isPlaying && pauseOnMarkers) {
-        await player.pause();
-        isPlaying = false;
+      isSeeking = true;
+      try {
+        const tailSeg = segments[segments.length - 1];
+        const pauseOnMarkers = document.getElementById("pause-markers-chk").checked;
+        if (isPlaying && pauseOnMarkers) {
+          await player.pause();
+          isPlaying = false;
+        }
+        await player.seek(tailSeg.endTime);
+        applyEndState("jumped");
+      } finally {
+        isSeeking = false;
       }
-      applyEndState("jumped");
-      await player.seek(tailSeg.endTime);
     }
 
     function stepPrevChapter() {
@@ -835,7 +868,8 @@
       if (activeChapterIdx <= 0) {
         jumpToStart();
       } else {
-        jumpToChapter(Math.min(chapters.length - 1, activeChapterIdx - 1));
+        const targetIdx = Math.min(getEndStopIndex(), activeChapterIdx) - 1;
+        jumpToChapter(targetIdx);
       }
     }
 
@@ -853,11 +887,16 @@
       if (isPlaying) {
         player.pause();
       } else {
-        if (activeChapterIdx >= chapters.length && chapters.length > 0) {
-          activeChapterIdx = -1;
-          currentSegmentIdx = 0;
-          lastPolledTime = 0;
-          await player.seek(0);
+        if (activeChapterIdx >= getEndStopIndex() && chapters.length > 0) {
+          isSeeking = true;
+          try {
+            activeChapterIdx = -1;
+            currentSegmentIdx = 0;
+            lastPolledTime = 0;
+            await player.seek(0);
+          } finally {
+            isSeeking = false;
+          }
         }
         player.play();
       }
@@ -873,22 +912,24 @@
     }
 
     async function syncLiveSpeedFromPlayer() {
-      if (!player || typeof player.getCurrentTime !== "function") return;
+      if (!player || isSeeking || typeof player.getCurrentTime !== "function") return;
       try {
         const t = await player.getCurrentTime();
         if (typeof t !== "number" || Number.isNaN(t)) return;
         const tailSeg = segments[segments.length - 1];
         const timeChanged = Math.abs(t - lastPolledTime) >= 0.005;
+        const endStopIdx = getEndStopIndex();
+
+        if (!isPlaying && !timeChanged) return;
 
         if (tailSeg && t >= tailSeg.endTime - 0.02) {
-          if (activeChapterIdx !== chapters.length || isPlaying) {
+          if (activeChapterIdx !== endStopIdx || isPlaying) {
             applyEndState(isPlaying ? "ended" : "jumped");
           }
           lastPolledTime = t;
           return;
         }
 
-        if (!isPlaying && !timeChanged) return;
         lastPolledTime = t;
 
         if (isPlaying) {
@@ -990,7 +1031,7 @@
 
       player.addEventListener("play", () => {
         isPlaying = true;
-        if (activeChapterIdx >= chapters.length) {
+        if (activeChapterIdx >= getEndStopIndex()) {
           activeChapterIdx = -1;
           currentSegmentIdx = 0;
         }
@@ -1011,11 +1052,12 @@
 
       player.addEventListener("pause", async () => {
         isPlaying = false;
+        if (isSeeking) return;
         const tailSeg = segments[segments.length - 1];
         if (tailSeg && typeof player.getCurrentTime === "function") {
           try {
             const t = await player.getCurrentTime();
-            if (typeof t === "number" && t >= tailSeg.endTime - 0.05) {
+            if (!isSeeking && typeof t === "number" && t >= tailSeg.endTime - 0.05) {
               applyEndState("ended");
               return;
             }
@@ -1027,6 +1069,10 @@
       });
 
       player.addEventListener("marker", ({ index, time, label }) => {
+        if (!hasTrailingSegment() && index >= chapters.length - 1) {
+          applyEndState("ended");
+          return;
+        }
         activeChapterIdx = index;
         lastPolledTime = time;
         const finishedSeg = segments[index];

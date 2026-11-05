@@ -51,12 +51,8 @@ _COMMON_SUBDIRS = {
 
 def _is_temp_or_internal_path(p_str: str) -> bool:
     home_gemini = str(Path.home() / ".gemini")
-    return (
-        p_str.startswith(home_gemini)
-        or p_str.startswith("/tmp")
-        or p_str.startswith("/private/tmp")
-        or p_str.startswith("/var/folders")
-        or p_str.startswith("/private/var/folders")
+    return p_str.startswith(
+        (home_gemini, "/tmp", "/private/tmp", "/var/folders", "/private/var/folders")
     )
 
 
@@ -68,7 +64,11 @@ def _normalize_workspace_dir(dir_path: Path) -> str:
     for parent in (dir_path, *dir_path.parents):
         if parent != home and (parent / ".git").is_dir():
             return str(parent)
-    if dir_path.name in _COMMON_SUBDIRS and len(dir_path.parents) > 1 and dir_path.parent != home:
+    if (
+        dir_path.name in _COMMON_SUBDIRS
+        and len(dir_path.parents) > 1
+        and dir_path.parent != home
+    ):
         return str(dir_path.parent)
     return str(dir_path)
 

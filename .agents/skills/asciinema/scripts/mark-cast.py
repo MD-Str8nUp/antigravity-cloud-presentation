@@ -53,7 +53,7 @@ def load_auto_spec(spec_path: str) -> list[tuple[str, re.Pattern[str]]]:
     """
     data = json.loads(Path(spec_path).read_text(encoding="utf-8"))
     if not isinstance(data, list):
-        raise ValueError(
+        raise TypeError(
             f"Expected a JSON list in {spec_path}, got {type(data).__name__}"
         )
     specs: list[tuple[str, re.Pattern[str]]] = []
@@ -922,7 +922,9 @@ def main() -> int:
         elif args.auto_skilled:
             auto_spec_path = str(repo_root / "scripts" / "markers" / "02-skilled.json")
         elif args.auto_production:
-            auto_spec_path = str(repo_root / "scripts" / "markers" / "03-production.json")
+            auto_spec_path = str(
+                repo_root / "scripts" / "markers" / "03-production.json"
+            )
 
     mutating = bool(
         args.clear
