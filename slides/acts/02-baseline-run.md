@@ -88,6 +88,66 @@ Let's interact with the first half of the Baseline Run recording. Using the righ
 -->
 
 ---
+layout: default
+---
+
+<!-- S08b -->
+<div class="flex items-center gap-3 mb-4">
+  <h2 class="text-2xl font-bold m-0">The <code>/clear</code> Boundary: When Memory Resets to Zero</h2>
+</div>
+
+<div class="p-3.5 rounded-xl bg-gray-900/90 border border-amber-500/30 flex items-center justify-between mb-4">
+  <div class="flex items-center gap-3">
+    <span class="text-amber-400 font-mono text-sm font-bold bg-amber-950/80 px-2 py-0.5 rounded border border-amber-500/30">/clear</span>
+    <span class="text-xs text-gray-300">Wiping conversation memory &middot; Transitioning from <strong>Session 1 (Build)</strong> to <strong>Session 2 (Audit)</strong></span>
+  </div>
+  <span class="text-[10px] text-amber-300/80 px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/20 font-mono">The Durability Test</span>
+</div>
+
+<div class="grid grid-cols-2 gap-6">
+  <div class="p-4 rounded-xl bg-cyan-950/15 border border-cyan-500/30 space-y-2.5">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-mono text-cyan-400 uppercase tracking-wide">Session 1 On-Disk Artifacts</span>
+      <span class="text-[10px] text-cyan-300/80 px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/20">What Survived</span>
+    </div>
+    <h3 class="text-base font-bold text-white">Working Code on Localhost</h3>
+    <ul class="text-xs text-gray-300 space-y-1.5 list-disc pl-4">
+      <li><strong>Node 22 + Express:</strong> <code>server.js</code>, <code>schema.sql</code>, vanilla frontend.</li>
+      <li><strong>Realistic Seed Data:</strong> <code>TL072</code>, <code>PT2399</code>, <code>1N4148</code>, pedal kit records.</li>
+      <li><strong>Hardware Styling:</strong> Resistor color-band generator, dark workbench UI.</li>
+      <li><strong>Immediate Result:</strong> Looks functional and complete in browser on <code>localhost:3000</code>.</li>
+    </ul>
+  </div>
+
+  <div class="p-4 rounded-xl bg-red-950/15 border border-red-500/30 space-y-2.5">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-mono text-red-400 uppercase tracking-wide">The /clear Amnesia Gap</span>
+      <span class="text-[10px] text-red-300/80 px-1.5 py-0.5 rounded bg-red-950/60 border border-red-500/20">What Was Lost</span>
+    </div>
+    <h3 class="text-base font-bold text-white">Zero Written Intent or Tests</h3>
+    <ul class="text-xs text-gray-300 space-y-1.5 list-disc pl-4">
+      <li><strong>No Specifications:</strong> 0 <code>spec.md</code>, 0 <code>ADR</code>s, 0 <code>GLOSSARY.md</code>.</li>
+      <li><strong>No Automated Verification:</strong> 0 unit tests, 0 integration tests.</li>
+      <li><strong>Ephemeral Rationale:</strong> Every domain edge case lived only in prior chat context.</li>
+      <li><strong>Next Session Reality:</strong> The fresh agent must reverse-engineer intent from raw code alone.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="mt-4 p-3 rounded-lg bg-gray-900/80 border border-gray-800 text-xs text-gray-300 flex items-center justify-between">
+  <div>
+    <span class="text-cyan-300 font-semibold">The Core Question:</span> When a fresh agent reviews this codebase without conversation memory, what does it find?
+  </div>
+  <div class="text-[11px] font-mono text-gray-400">
+    Proceed to Part 2 &rarr;
+  </div>
+</div>
+
+<!--
+We have just watched the agent generate a complete working prototype in sixteen minutes. Everything looks impressive on the surface. But now we hit the central test of agentic development: the /clear boundary. When we wipe the conversation context, all the ephemeral chat memory is gone. The next agent session knows only what was permanently written to disk. As we step into Part 2, watch what happens when a fresh agent inspects the code with no spec or glossary to guide it—and uncovers eight latent bugs.
+-->
+
+---
 layout: cast-full
 title: "Baseline Run (Part 2): /clear Audit, 8 Bug Fixes & Browser Verification"
 cast: /casts/01-baseline.cast
