@@ -97,34 +97,88 @@ layout: default
 ---
 
 <!-- S03 -->
-<div class="flex items-center gap-3 mb-6">
-  <h2 class="text-2xl font-bold m-0">The Experiment: One Domain, Three Ways</h2>
+<div class="flex items-center gap-3 mb-5">
+  <h2 class="text-2xl font-bold m-0">The Mission: Taming a Study Full of Audio Electronics Parts &amp; Kits</h2>
 </div>
 
-<ol class="space-y-4 text-sm text-gray-200 list-decimal pl-6 mt-5 leading-relaxed">
-  <li>
-    <strong class="text-white">Subject Domain: Audio Electronics Component &amp; Kit Inventory</strong>
-    <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
-      <li>Track electronic <strong>Components</strong> (op-amps like <code>TL074</code>, resistors, capacitors, pots, <code>SMT</code> vs. <code>THT</code> packages, storage bins) and DIY <strong>Kit</strong> builds (BOM fulfillment, shortages, and build progress).</li>
-      <li>Chosen because it looks like a simple CRUD app at first glance, but hides real domain nuance once you ask how parts are stored, allocated, and ordered.</li>
-    </ul>
-  </li>
-  <li>
-    <strong class="text-white">Two Recorded Approaches: Identical Prompt + Canonical Q&amp;A</strong>
-    <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
-      <li>Both recorded runs start from the exact same initial prompt and pre-scripted <strong>Canonical Q&amp;A</strong>, with every terminal keystroke captured via <code>asciinema</code> and paired with exported <strong>Session Traces</strong> across <code>/clear</code> boundaries.</li>
-    </ul>
-  </li>
-  <li>
-    <strong class="text-white">Productionizing Later with <code>google/skills</code></strong>
-    <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
-      <li>Leads into how to compose workflow skills with the <code>google/skills</code> skill set to take the local architecture to scale-to-zero Google Cloud production.</li>
-    </ul>
-  </li>
-</ol>
+<div class="grid grid-cols-12 gap-6 items-center h-88">
+  <div class="col-span-5 h-full flex items-center justify-center rounded-2xl bg-gray-950/60 border border-gray-800/80 p-4 relative overflow-hidden">
+    <svg viewBox="0 0 260 380" class="w-full h-full max-h-[340px]" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="14" width="220" height="352" rx="18" fill="#0b0c10" stroke="#374151" stroke-width="2.5" />
+      <rect x="26" y="20" width="208" height="340" rx="14" fill="#121317" stroke="#1f2937" stroke-width="1.5" />
+      <circle cx="42" cy="34" r="3.5" fill="#ef4444" opacity="0.8" />
+      <circle cx="54" cy="34" r="3.5" fill="#f59e0b" opacity="0.8" />
+      <circle cx="66" cy="34" r="3.5" fill="#10b981" opacity="0.8" />
+      <rect x="82" y="29" width="136" height="10" rx="5" fill="#181b22" />
+      <rect x="38" y="50" width="184" height="22" rx="7" fill="#181b22" stroke="#374151" stroke-width="1.2" />
+      <circle cx="50" cy="60.5" r="4" stroke="#22d3ee" stroke-width="1.5" />
+      <line x1="53" y1="63.5" x2="56.5" y2="67" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" />
+      <rect x="64" y="58" width="84" height="5" rx="2.5" fill="#374151" />
+      <rect x="38" y="84" width="184" height="78" rx="10" fill="#161920" stroke="#0891b2" stroke-width="1.2" />
+      <g stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="60" y="100" width="44" height="46" rx="4" fill="#083344" />
+        <path d="M75 100 A7 7 0 0 0 89 100" fill="#161920" />
+        <line x1="50" y1="108" x2="60" y2="108" />
+        <line x1="50" y1="118" x2="60" y2="118" />
+        <line x1="50" y1="128" x2="60" y2="128" />
+        <line x1="50" y1="138" x2="60" y2="138" />
+        <line x1="104" y1="108" x2="114" y2="108" />
+        <line x1="104" y1="118" x2="114" y2="118" />
+        <line x1="104" y1="128" x2="114" y2="128" />
+        <line x1="104" y1="138" x2="114" y2="138" />
+      </g>
+      <rect x="128" y="102" width="64" height="7" rx="3.5" fill="#cbd5e1" opacity="0.85" />
+      <rect x="128" y="116" width="48" height="6" rx="3" fill="#22d3ee" opacity="0.55" />
+      <rect x="128" y="134" width="38" height="10" rx="4" fill="#083344" stroke="#06b6d4" stroke-width="1" />
+      <rect x="38" y="172" width="184" height="78" rx="10" fill="#161920" stroke="#b45309" stroke-width="1.2" />
+      <g stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M50 211 H60 L65 199 L73 223 L81 199 L89 223 L97 199 L102 211 H114" />
+      </g>
+      <rect x="128" y="190" width="64" height="7" rx="3.5" fill="#cbd5e1" opacity="0.85" />
+      <rect x="128" y="204" width="52" height="6" rx="3" fill="#fbbf24" opacity="0.55" />
+      <rect x="128" y="222" width="38" height="10" rx="4" fill="#451a03" stroke="#d97706" stroke-width="1" />
+      <rect x="38" y="260" width="184" height="78" rx="10" fill="#161920" stroke="#047857" stroke-width="1.2" />
+      <g stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="50" y1="299" x2="76" y2="299" />
+        <line x1="76" y1="281" x2="76" y2="317" />
+        <path d="M90 281 C83 289 83 309 90 317" />
+        <line x1="86" y1="299" x2="114" y2="299" />
+        <line x1="64" y1="285" x2="70" y2="285" stroke-width="1.8" />
+        <line x1="67" y1="282" x2="67" y2="288" stroke-width="1.8" />
+      </g>
+      <rect x="128" y="278" width="64" height="7" rx="3.5" fill="#cbd5e1" opacity="0.85" />
+      <rect x="128" y="292" width="44" height="6" rx="3" fill="#34d399" opacity="0.55" />
+      <rect x="128" y="310" width="38" height="10" rx="4" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+    </svg>
+  </div>
+  <div class="col-span-7 flex flex-col justify-center">
+    <ol class="space-y-4 text-sm text-gray-200 list-decimal pl-6 leading-relaxed m-0">
+      <li>
+        <strong class="text-white">A Study Full of Parts, Zero Index</strong>
+        <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
+          <li>Binders of SMD cut-tape strips, multi-drawer cabinets, and anti-static bags of op-amps (<code>TL072</code>, <code>TL074</code>), PT2399 delay chips, resistors, and capacitors scattered across the study.</li>
+          <li>What looks like a simple two-table CRUD app hides real domain edge cases once the same part lives across multiple bins and packages (<code>SMT</code> vs. <code>THT</code>).</li>
+        </ul>
+      </li>
+      <li>
+        <strong class="text-white">The &ldquo;Buy It Again&rdquo; Tax &amp; DIY Kit BOM Collisions</strong>
+        <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
+          <li>Re-ordering parts from LCSC, Mouser, or Tayda that I already own because hunting through 40 unindexed drawers takes longer than buying a fresh reel.</li>
+          <li>Planning multiple guitar pedal or synth <strong>Kit Builds</strong> where shared stock gets double-counted across competing Bills of Materials (BOMs).</li>
+        </ul>
+      </li>
+      <li>
+        <strong class="text-white">The Goal: A Workbench Inventory &amp; Kit Build Tracker</strong>
+        <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
+          <li>Instant search by electrical value (<code>10k</code>, <code>100nF</code>), footprint (<code>0603</code>, <code>DIP-8</code>), or part code, pinpointing the exact <strong class="text-cyan-300">Storage Location</strong>, <strong class="text-cyan-300">BOM Fulfillment</strong> state, and <strong class="text-cyan-300">Net Shortfall</strong> shopping list.</li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+</div>
 
 <!--
-To make this comparison concrete rather than theoretical, we built an experiment around an audio electronics workbench inventory and DIY kit manager. At first glance, tracking op-amps, resistors, and pedal kits sounds like a simple two-table CRUD app. Underneath, though, are real domain questions: what happens when the same op-amp lives in two different drawer bins, or when three planned pedal builds compete for the same five chips? We recorded two alternative approaches starting from the exact same prompt and operator answers, and then use those results to lead into how to productionize the application with the google/skills skill set.
+So what are we actually going to build to test this thesis? Let me set the scene. My study at home is full of audio electronics components—SMD binders of cut-tape resistors and capacitors, multi-drawer cabinets of TL072 and TL074 op-amps, and bags of potentiometers and jacks for DIY guitar pedals and synth modules. Half the time, it's faster to re-order a twenty-cent part from Mouser or Tayda than hunt through forty drawers—and when I plan three pedal builds at once, I need to know which kits I can actually fulfill from stock on hand and what my true net shortfall is. It sounds like a simple CRUD app at first glance, but underneath are rich domain edge cases.
 -->
 
 ---
@@ -168,11 +222,15 @@ layout: default
 ---
 
 <!-- S05 -->
-<div class="flex items-center gap-3 mb-6">
+<div class="flex items-center gap-3 mb-4">
   <h2 class="text-2xl font-bold m-0">Two Alternative Approaches + Productionizing with <code>google/skills</code></h2>
 </div>
 
-<ol class="space-y-4 text-sm text-gray-200 list-decimal pl-6 mt-5 leading-relaxed">
+<div class="p-3 rounded-xl bg-gray-900/90 border border-cyan-500/30 text-xs font-mono text-cyan-200 mb-4">
+  <span class="text-gray-400">Initial Prompt:</span> "I'd like to build a web application to track my audio electronics components inventory and DIY kit builds."
+</div>
+
+<ol class="space-y-3.5 text-sm text-gray-200 list-decimal pl-6 leading-relaxed">
   <li>
     <strong class="text-white">Approach 1: The Baseline Run (Rapid Vibe Coding — <code>01-baseline.cast</code>)</strong>
     <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
@@ -183,7 +241,7 @@ layout: default
   <li>
     <strong class="text-white">Approach 2: The Skilled Run (<code>mattpocock/skills</code> — <code>02-skilled.cast</code>)</strong>
     <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
-      <li>Installs 38 engineering workflow skills (<code>/wayfinder</code>, <code>/grilling</code>, <code>/domain-modeling</code>, <code>/prototype</code>, <code>/to-spec</code>, <code>/to-tickets</code>, <code>/implement-spec</code>, <code>/code-review</code>).</li>
+      <li>Same prompt + Canonical Q&amp;A, with 38 engineering workflow skills installed (<code>/wayfinder</code>, <code>/grilling</code>, <code>/domain-modeling</code>, <code>/prototype</code>, <code>/to-spec</code>, <code>/to-tickets</code>, <code>/implement-spec</code>, <code>/code-review</code>).</li>
       <li>Executes across 10 <code>/clear</code> sessions and 11 subagents to build a 41-test Rust + Axum + Maud + HTMX + local Turso application.</li>
     </ul>
   </li>
