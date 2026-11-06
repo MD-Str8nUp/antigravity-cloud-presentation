@@ -97,13 +97,13 @@ layout: default
 ---
 
 <!-- S03 -->
-<div class="flex items-center gap-3 mb-5">
-  <h2 class="text-2xl font-bold m-0">The Mission: Taming a Study Full of Audio Electronics Parts</h2>
+<div class="flex items-center gap-3 mb-3">
+  <h2 class="text-2xl font-bold m-0">The Mission: Taming a Study Full of Electronics Parts</h2>
 </div>
 
-<div class="grid grid-cols-12 gap-6 items-center h-88">
+<div class="grid grid-cols-12 gap-6 items-center h-86">
   <div class="col-span-5 h-full flex items-center justify-center rounded-2xl bg-gray-950/60 border border-gray-800/80 p-4 relative overflow-hidden">
-    <svg viewBox="0 0 260 380" class="w-full h-full max-h-[340px]" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 260 380" class="w-full h-full max-h-[330px]" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect x="20" y="14" width="220" height="352" rx="18" fill="#0b0c10" stroke="#374151" stroke-width="2.5" />
       <rect x="26" y="20" width="208" height="340" rx="14" fill="#121317" stroke="#1f2937" stroke-width="1.5" />
       <circle cx="42" cy="34" r="3.5" fill="#ef4444" opacity="0.8" />
@@ -152,25 +152,25 @@ layout: default
     </svg>
   </div>
   <div class="col-span-7 flex flex-col justify-center">
-    <ol class="space-y-4 text-sm text-gray-200 list-decimal pl-6 leading-relaxed m-0">
+    <ol class="space-y-2.5 text-sm text-gray-200 list-decimal pl-6 leading-snug m-0">
       <li>
         <strong class="text-white">A Study Full of Parts, Zero Index</strong>
-        <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
-          <li>Binders of SMD cut-tape strips, multi-drawer cabinets, and anti-static bags of op-amps (<code>TL072</code>, <code>TL074</code>), PT2399 delay chips, resistors, and capacitors scattered across the study.</li>
-          <li>What looks like a simple two-table CRUD app hides real domain edge cases once the same part lives across multiple bins and packages (<code>SMT</code> vs. <code>THT</code>).</li>
+        <ul class="list-disc pl-5 mt-0.5 space-y-0.5 text-gray-300">
+          <li>Binders of SMD cut-tape strips, multi-drawer cabinets, and anti-static bags scattered across the study.</li>
+          <li>Hundreds of op-amps (<code>TL072</code>, <code>TL074</code>), resistors, and capacitors&mdash;and no idea which part lives in which drawer.</li>
         </ul>
       </li>
       <li>
-        <strong class="text-white">The &ldquo;Buy It Again&rdquo; Tax &amp; DIY Kit BOM Collisions</strong>
-        <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
-          <li>Re-ordering parts from LCSC, Mouser, or Tayda that I already own because hunting through 40 unindexed drawers takes longer than buying a fresh reel.</li>
-          <li>Planning multiple guitar pedal or synth <strong>Kit Builds</strong> where shared stock gets double-counted across competing Bills of Materials (BOMs).</li>
+        <strong class="text-white">The &ldquo;Buy It Again&rdquo; Workbench Tax</strong>
+        <ul class="list-disc pl-5 mt-0.5 space-y-0.5 text-gray-300">
+          <li>Re-ordering components from LCSC, Mouser, or Tayda that I definitely already own, simply because hunting through 40 unindexed drawers takes longer than buying a fresh reel.</li>
         </ul>
       </li>
       <li>
-        <strong class="text-white">The Goal: A Workbench Inventory &amp; Kit Build Tracker</strong>
-        <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
-          <li>Instant search by electrical value (<code>10k</code>, <code>100nF</code>), footprint (<code>0603</code>, <code>DIP-8</code>), or part code, pinpointing the exact <strong class="text-cyan-300">Storage Location</strong>, <strong class="text-cyan-300">BOM Fulfillment</strong> state, and <strong class="text-cyan-300">Net Shortfall</strong> shopping list.</li>
+        <strong class="text-white">The Goal: An Audio Inventory &amp; DIY Kit Manager</strong>
+        <ul class="list-disc pl-5 mt-0.5 space-y-0.5 text-gray-300">
+          <li>Instant search by value (<code>10k</code>, <code>100nF</code>), footprint (<code>0603</code>, <code>DIP-8</code>), or part code.</li>
+          <li>Pinpoints the exact <strong class="text-cyan-300">Storage Location</strong>, tracks DIY pedal <strong class="text-cyan-300">Kit BOMs</strong>, and computes <strong class="text-cyan-300">Net Shortfall</strong> shopping lists.</li>
         </ul>
       </li>
     </ol>
@@ -223,7 +223,7 @@ layout: default
 
 <!-- S05 -->
 <div class="flex items-center gap-3 mb-4">
-  <h2 class="text-2xl font-bold m-0">Two Alternative Approaches + Productionizing with <code>google/skills</code></h2>
+  <h2 class="text-2xl font-bold m-0">Two Alternative Approaches</h2>
 </div>
 
 <div class="p-3 rounded-xl bg-gray-900/90 border border-cyan-500/30 text-xs font-mono text-cyan-200 mb-4">
@@ -243,12 +243,6 @@ layout: default
     <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
       <li>Same prompt + Canonical Q&amp;A, with 38 engineering workflow skills installed (<code>/wayfinder</code>, <code>/grilling</code>, <code>/domain-modeling</code>, <code>/prototype</code>, <code>/to-spec</code>, <code>/to-tickets</code>, <code>/implement-spec</code>, <code>/code-review</code>).</li>
       <li>Executes across 10 <code>/clear</code> sessions and 11 subagents to build a 41-test Rust + Axum + Maud + HTMX + local Turso application.</li>
-    </ul>
-  </li>
-  <li>
-    <strong class="text-white">Next Step: Productionizing with <code>google/skills</code> (+ Interactive Codelab)</strong>
-    <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
-      <li>Composes <code>mattpocock/skills</code> with <code>google/skills</code> to adapt the <code>InventoryRepository</code> seam for scale-to-zero <strong>Cloud Run</strong> + <strong>Cloud Firestore</strong>, culminating in a 5-lesson hands-on <strong>Codelab</strong>.</li>
     </ul>
   </li>
 </ol>
