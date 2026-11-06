@@ -96,14 +96,12 @@ layout: default
         <strong>Chrome DevTools:</strong> Headless browser interaction, UI tests, and console logs.
       </p>
     </div>
-
     <div class="p-3 rounded-lg bg-gray-900/80 border border-gray-800">
       <div class="text-xs font-mono text-emerald-400 font-semibold">Specialized Subagents</div>
       <p class="text-xs text-gray-300 mt-1">
         <strong>egm:</strong> Multi-agent review swarm for spec drafting, quality audits, and verification.
       </p>
     </div>
-
     <div class="p-3 rounded-lg bg-gray-900/80 border border-gray-800">
       <div class="text-xs font-mono text-purple-400 font-semibold">Domain &amp; Platform Guidance</div>
       <p class="text-xs text-gray-300 mt-1">

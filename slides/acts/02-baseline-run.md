@@ -41,7 +41,6 @@ title: Baseline Run Setup — Global Rule + Ambient Web Guidance
         </div>
       </div>
     </div>
-
     <div class="p-3.5 rounded-xl bg-gray-900/90 border border-cyan-500/30 flex flex-col justify-between">
       <div>
         <div class="flex items-center justify-between text-xs font-mono text-cyan-400 uppercase tracking-wide mb-2">
