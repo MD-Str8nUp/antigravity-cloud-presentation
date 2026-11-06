@@ -98,7 +98,7 @@ layout: default
 
 <!-- S03 -->
 <div class="flex items-center gap-3 mb-5">
-  <h2 class="text-2xl font-bold m-0">The Mission: Taming a Study Full of Audio Electronics Parts &amp; Kits</h2>
+  <h2 class="text-2xl font-bold m-0">The Mission: Taming a Study Full of Audio Electronics Parts</h2>
 </div>
 
 <div class="grid grid-cols-12 gap-6 items-center h-88">
