@@ -73,6 +73,61 @@ Let's watch Session 1 of the Skilled Run. At stop points 1 and 2, we run npx ski
 -->
 
 ---
+layout: default
+---
+
+<!-- S13a -->
+<div class="flex items-center gap-3 mb-4">
+  <h2 class="text-2xl font-bold m-0">The Session 1 Handover: What Lives on Disk Before <code>/clear</code></h2>
+</div>
+
+<div class="grid grid-cols-3 gap-5 mt-5">
+  <div class="p-4 rounded-xl bg-gray-900/90 border border-amber-500/30 flex flex-col justify-between">
+    <div>
+      <div class="text-xs font-mono text-amber-400 uppercase tracking-wide mb-1">Navigation Index</div>
+      <h3 class="text-base font-bold text-white mb-2"><code>map.md</code></h3>
+      <p class="text-xs text-gray-300 leading-relaxed">
+        Defines the final destination, constraints (Rust + HTMX + Turso), and a prioritized queue of 5 self-contained decision tickets.
+      </p>
+    </div>
+    <div class="text-[11px] font-mono text-amber-300/80 bg-amber-950/40 p-2 rounded border border-amber-500/20 mt-3">
+      Status: Ready for Ticket 01
+    </div>
+  </div>
+
+  <div class="p-4 rounded-xl bg-gray-900/90 border border-cyan-500/30 flex flex-col justify-between">
+    <div>
+      <div class="text-xs font-mono text-cyan-400 uppercase tracking-wide mb-1">Durable Truth</div>
+      <h3 class="text-base font-bold text-white mb-2"><code>GLOSSARY.md</code> &amp; ADRs</h3>
+      <p class="text-xs text-gray-300 leading-relaxed">
+        Pins domain definitions (<em>Component</em> vs. <em>Stock Lot</em>) and ADR 0001 so future agent sessions never re-litigate established choices.
+      </p>
+    </div>
+    <div class="text-[11px] font-mono text-cyan-300/80 bg-cyan-950/40 p-2 rounded border border-cyan-500/20 mt-3">
+      Zero Drift Across Sessions
+    </div>
+  </div>
+
+  <div class="p-4 rounded-xl bg-gray-900/90 border border-purple-500/30 flex flex-col justify-between">
+    <div>
+      <div class="text-xs font-mono text-purple-400 uppercase tracking-wide mb-1">Decision Queue</div>
+      <h3 class="text-base font-bold text-white mb-2">5 Isolated Tickets</h3>
+      <ul class="text-xs text-gray-300 space-y-1.5 list-disc pl-4 mt-2">
+        <li><strong>01:</strong> Taxonomy &amp; Parametric Schema</li>
+        <li><strong>02:</strong> BOM Matching &amp; 5-State Lifecycle</li>
+        <li><strong>03:</strong> CSV Imports &amp; Shortfall Math</li>
+        <li><strong>04:</strong> Rust Modules &amp; Turso DB</li>
+        <li><strong>05:</strong> 3-Variant UI Prototype</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!--
+Before we run /clear, look at what Session 1 left behind. Rather than keeping decisions trapped in ephemeral chat memory, /wayfinder persisted our roadmap in map.md, anchored our domain terms in GLOSSARY.md, and cut five granular decision tickets. Now watch what happens in Sessions 2 through 5: every ticket is tackled in a brand-new agent session with zero context baggage.
+-->
+
+---
 layout: cast-full
 title: "Skilled Run (Sessions 2–5): Resolving Decision Tickets 01–04 Across /clear"
 cast: /casts/02-skilled.cast

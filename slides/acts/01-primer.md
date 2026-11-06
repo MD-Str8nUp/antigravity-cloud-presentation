@@ -8,7 +8,7 @@ class: text-center
   <h1 class="text-5xl font-extrabold tracking-tight text-white mb-3">
     Vibe Coding vs. Skill-Driven Engineering
   </h1>
-  <p class="text-2xl text-gray-300 font-light max-w-3xl">
+  <p class="text-2xl text-gray-300 font-medium max-w-3xl">
     How Rules, Composable Agent Skills, and Google Cloud Skills Shape Antigravity Across Context Boundaries
   </p>
 
