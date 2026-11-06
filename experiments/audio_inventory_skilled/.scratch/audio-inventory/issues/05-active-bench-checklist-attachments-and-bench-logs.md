@@ -1,0 +1,13 @@
+# 05: Active Bench Checklist, Build Attachments & Bench Log Entries
+
+**What to build:** The **Active Bench Checklist** view that groups a **Kit Build**'s **BOM Lines** by assembly stage / component profile height (`Stage 1: Low-Profile Resistors & Diodes`, `Stage 2: IC Sockets & Film Capacitors`, `Stage 3: Electrolytics, Pots & Off-Board Hardware`) with an overall placement progress bar (`X / Y Placements Soldered`) and interactive per-designator soldering chips (`[○ R1]`, `[✓ R2]`), paired with a pinned right-hand panel for uploading/accessing local build attachments (`Schematic PDF`, `Build Doc / Drill Template`, `Photos`) and external URLs, plus a chronological stream of timestamped **Bench Log Entries** (`Measurement / Voltage Reading`, `Troubleshooting`, `Modification`, `Note`).
+
+**Blocked by:** 03: Kit Builds, BOM Line Auto-Matching & 5-State Stock Fulfillment
+
+**Status:** resolved
+
+- [x] Opening a **Kit Build** in the **Active Bench Checklist** view groups its **BOM Lines** into the three profile-height assembly stages (`Stage 1: Low-Profile Resistors & Diodes`, `Stage 2: IC Sockets & Film Capacitors`, `Stage 3: Electrolytics, Pots & Off-Board Hardware`) and displays an overall placement `<progress>` bar (`X / Y Placements Soldered`).
+- [x] Each **BOM Line** renders tappable reference-designator chip buttons (`[○ R1]`, `[✓ R2]`, `[○ R5]`) backed by `installed_designators_json` that toggle individual placements via HTMX, and checking the final designator on a line (or clicking `"Mark All Installed"`) automatically transitions the **BOM Line**'s **Fulfillment Status** to `Installed` (deducting from `source_lot_id` if not already `Picked`) and updates the header progress counter.
+- [x] A builder can attach external project/forum URLs and upload local files (`Schematic PDF`, `Build Doc / Drill Template`, `Photos`) to a **Kit Build**, storing files under `data/attachments/<kit_build_id>/<uuid>-<sanitized_filename>` and surfacing them in the pinned right-hand panel beside the bench checklist.
+- [x] A builder can create and view chronological, timestamped **Bench Log Entries** categorized as `Measurement / Voltage Reading`, `Troubleshooting`, `Modification`, or `Note` (optionally with attached bench photos) directly in the pinned right-hand panel via HTMX without losing their place on the checklist.
+- [x] Integration tests against `:memory:` Turso (and a temporary attachments directory) verify per-designator chip toggling, automatic transition to `Installed` when all placements on a **BOM Line** are checked, attachment metadata/file persistence, and **Bench Log Entry** creation and ordering.

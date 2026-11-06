@@ -1,0 +1,13 @@
+# 04: BOM Substitutions, Partial Allocations, 1-Click Line Splitting & Kit Build Cloning
+
+**What to build:** Real-world kitting flexibility on a **Kit Build** **BOM**: substituting any catalog **Component** onto a **BOM Line** via a native `<dialog>` modal with an optional `substitution_note` while keeping the schematic's original `raw_spec_text` visible side by side, partially allocating available stock (`0 < quantity_allocated < quantity_required`), splitting a multi-quantity **BOM Line** by quantity and `reference_designators` into two flat **BOM Lines** in one click, and cloning an entire **Kit Build** to build a second unit.
+
+**Blocked by:** 03: Kit Builds, BOM Line Auto-Matching & 5-State Stock Fulfillment
+
+**Status:** resolved
+
+- [x] A builder can open a native `<dialog closedby="any">` substitution modal from any **BOM Line** (or the Inspector Drawer) to link any catalog **Component** and record an optional `substitution_note` without overwriting `raw_spec_text`, rendering both the original schematic specification (e.g., `J201`) and the substituted part + note (e.g., `2N5457 — pinout rotated`) side by side in the **BOM** table.
+- [x] A builder can partially allocate a **BOM Line** (`0 < quantity_allocated < quantity_required`) when `Reserved` or `Picked`, holding the allocated quantity for the build while displaying a `Shortfall: N` badge for the remaining `quantity_required - quantity_allocated`.
+- [x] A builder can trigger a 1-click **"Split BOM Line"** action in the Inspector Drawer on any **BOM Line** with `quantity_required > 1`, partitioning the quantity ($k$ and $\text{quantity\_required} - k$) and `reference_designators` (e.g., `4x C1, C2, C3, C4` → `2x C1, C2` and `2x C3, C4`) into two flat sibling **BOM Lines** that can be fulfilled from different **Stock Lots** or substitute **Components**.
+- [x] A builder can trigger a 1-click **"Clone Kit Build"** action that creates a new **Kit Build** copying the build metadata, external links, shared schematic/build-doc attachment references (without duplicating files on disk), and all **BOM Lines** (`raw_spec_text`, `reference_designators`, `quantity_required`, linked `component_id`, `substitution_note`, and `Included in Kit` flag) while resetting status to `Wishlist / Planned`, clearing `location_id`, resetting non-kit lines to `Unallocated` (`quantity_allocated = 0`, `source_lot_id = NULL`), and starting with an empty **Bench Log Entry** stream.
+- [x] Integration tests against `:memory:` Turso verify component substitution with preserved `raw_spec_text`, partial allocation shortfall counts, 1-click **BOM Line** quantity/designator splitting, and **Kit Build** cloning invariants.

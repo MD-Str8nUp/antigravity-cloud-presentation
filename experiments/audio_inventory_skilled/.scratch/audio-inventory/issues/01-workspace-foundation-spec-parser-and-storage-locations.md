@@ -1,0 +1,14 @@
+# 01: Workspace Foundation, Spec Parser & Hierarchical Storage Locations
+
+**What to build:** The self-contained single-binary web application foundation (`axum` + `maud` compile-time HTML/HTMX + embedded local `turso` SQLite database with startup migrations and vendored `htmx.min.js`/CSS), the deterministic electrical shorthand `spec_parser`, and end-to-end management of self-referential **Storage Locations** (`Crate`, `Box`, `Binder`, `Drawer`, `Bag`, `Other`) where creating or moving a container updates nested breadcrumb paths across the workbench shell.
+
+**Blocked by:** None (can start immediately)
+
+**Status:** resolved
+
+- [x] Running the server initializes the configurable unified data directory (`--data-dir` or `AUDIO_INVENTORY_DATA_DIR`, defaulting to `./data`), opens the local `turso` database (`turso::Builder::new_local`), enables `PRAGMA foreign_keys = ON;`, and applies embedded startup SQL migrations inside a transaction tracked by `_schema_migrations`.
+- [x] The server serves the top-level workbench shell (`Component Catalog`, `Kit Build BOM`, `Active Bench Checklist`, `Shopping List`, `CSV Import`) with vendored `htmx.min.js` and a standalone `color-scheme: light dark` CSS stylesheet (no Node/npm build step), returning either full pages or targeted HTMX partials when `HX-Request` is present.
+- [x] `spec_parser::parse_spec(raw_text, category_hint)` deterministically normalizes electrical shorthand (`4k7`, `4.7k`, `4700R` → `4700.0 Ω` / `4.7kΩ`; `0.047uF`, `47n`, `47000pF` → `47000.0 pF` / `47nF`; `4n7` → `4700.0 pF` / `4.7nF`; `100kA` → `100000.0 Ω` + `A` taper; `B50k` → `50000.0 Ω` + `B` taper), formats capacitances between `1nF` and `999nF` canonically as `nF`, and extracts tolerances (`1%`, `5%`), power ratings (`1/4W`, `0.25W`), voltage ratings (`63V`, `16V`), and packages (`0805`, `DIP-8`, `16mm PCB`) while preserving `raw_spec_text` verbatim.
+- [x] `spec_parser::infer_category_from_designators(designators)` maps reference designator prefixes (`R` → `Resistors`, `C` → `Capacitors`, `D`/`Q` → `Semiconductors — Discrete`, `U`/`IC` → `Integrated Circuits (ICs)`, `RV`/`VR` → `Potentiometers & Encoders`, `SW`/`J` → `Switches, Jacks & Connectors`, `L`/`T` → `Inductors, Transformers & Magnetics`) to the built-in category taxonomy.
+- [x] A builder can create, inspect, and move **Storage Locations** (`Crate`, `Box`, `Binder`, `Drawer`, `Bag`, `Other`) in a self-referential parent/child tree, and moving a container to a new parent automatically updates the computed recursive breadcrumb path (e.g., `Crate 2 > Passives Bag > Film Caps Sub-bag`) for all nested child **Storage Locations** while rejecting circular parent assignments.
+- [x] Unit tests cover `spec_parser` shorthand normalization and designator inference, and integration tests against `:memory:` Turso verify recursive **Storage Location** creation, parent moves, breadcrumb generation, and subtree queries.

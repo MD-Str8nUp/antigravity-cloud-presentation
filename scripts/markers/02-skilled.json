@@ -1,38 +1,446 @@
 [
   {
-    "label": "1. Install Matt Pocock Skills",
-    "pattern": "npx skills@latest add mattpocock/skills"
+    "pattern": "@event:7",
+    "label": "Paste Command: npx skills@latest add mattpocock/skills"
   },
   {
-    "label": "2. Launch agy",
-    "pattern": "\\bagy\\b"
+    "pattern": "@event:141",
+    "label": "38 Skills Installed"
   },
   {
-    "label": "3. /wayfinder (Chart Map)",
-    "pattern": "/wayfinder\\s+I'd like to build a web application to track my audio electronics components inventory and DIY kit builds"
+    "pattern": "@event:145",
+    "label": "Run Command: agy"
   },
   {
-    "label": "4. /to-spec",
-    "pattern": "/to-spec"
+    "pattern": "@event:154",
+    "label": "Antigravity Prompt Ready"
   },
   {
-    "label": "5. /to-tickets",
-    "pattern": "/to-tickets"
+    "pattern": "@event:157",
+    "label": "Submit Prompt: /wayfinder Audio Inventory"
   },
   {
-    "label": "6. /implement",
-    "pattern": "/implement"
+    "pattern": "@event:479",
+    "label": "Map Q1: Wayfinding Map Destination"
   },
   {
-    "label": "7. Clear Session (/clear)",
-    "pattern": "/clear"
+    "pattern": "@event:483",
+    "label": "Answer Map Q1: yes"
   },
   {
-    "label": "8. Codebase Review",
-    "pattern": "Please review the codebase"
+    "pattern": "@event:893",
+    "label": "Map Q2: Grilling Pace"
   },
   {
-    "label": "9. Apply Review Fixes",
-    "pattern": "please fix|p\\s*Gleasefix"
+    "pattern": "@event:937",
+    "label": "Answer Map Q2: one question at a time"
+  },
+  {
+    "pattern": "@event:1113",
+    "label": "Map Q3: Kit Build & BOM Scope"
+  },
+  {
+    "pattern": "@event:1118",
+    "label": "Answer Map Q3: yes"
+  },
+  {
+    "pattern": "@event:1241",
+    "label": "Map Q4: Structured vs Freeform Component Schema"
+  },
+  {
+    "pattern": "@event:1252",
+    "label": "Answer Map Q4: structured"
+  },
+  {
+    "pattern": "@event:1404",
+    "label": "Map Q5: Single-User Local vs Multi-User"
+  },
+  {
+    "pattern": "@event:1420",
+    "label": "Answer Map Q5: single user"
+  },
+  {
+    "pattern": "@event:1557",
+    "label": "Map Q6: Manual Entry & CSV Import vs Supplier APIs"
+  },
+  {
+    "pattern": "@event:1562",
+    "label": "Answer Map Q6: sgtm"
+  },
+  {
+    "pattern": "@event:1787",
+    "label": "Map Q7: Build Stages, Bench Logs & Attachments"
+  },
+  {
+    "pattern": "@event:1798",
+    "label": "Answer Map Q7: yes please"
+  },
+  {
+    "pattern": "@event:2116",
+    "label": "Map Q8: Single Kit Build Concept vs Separate Template"
+  },
+  {
+    "pattern": "@event:2185",
+    "label": "Answer Map Q8: single concept, hobby builder"
+  },
+  {
+    "pattern": "@event:2438",
+    "label": "Map Q9: Tech Stack Decision vs Standing Preference"
+  },
+  {
+    "pattern": "@event:2464",
+    "label": "Answer Map Q9: I have tech preferences"
+  },
+  {
+    "pattern": "@event:2545",
+    "label": "Map Q10: Specify Tech Stack Preferences"
+  },
+  {
+    "pattern": "@event:2592",
+    "label": "Answer Map Q10: Rust + HTMX + Local Turso"
+  },
+  {
+    "pattern": "@event:3061",
+    "label": "Map Q11: Confirm Wayfinding Map & 5 Decision Tickets"
+  },
+  {
+    "pattern": "@event:3067",
+    "label": "Answer Map Q11: lgtm"
+  },
+  {
+    "pattern": "@event:4107",
+    "label": "Wayfinder Map Charted (GLOSSARY, ADR 0001, map.md, 5 Tickets)"
+  },
+  {
+    "pattern": "@event:4134",
+    "label": "Session Cleared (/clear -> Ticket 01)"
+  },
+  {
+    "pattern": "@event:4145",
+    "label": "Submit Command: /wayfinder (Ticket 01)"
+  },
+  {
+    "pattern": "@event:5208",
+    "label": "Ticket 01 Q1: Component Category Taxonomy"
+  },
+  {
+    "pattern": "@event:5298",
+    "label": "Answer Ticket 01 Q1: 9th Category for Sub-Assemblies"
+  },
+  {
+    "pattern": "@event:5993",
+    "label": "Ticket 01 Q2: Hybrid SQL + specs_json Schema"
+  },
+  {
+    "pattern": "@event:5999",
+    "label": "Answer Ticket 01 Q2: sgtm"
+  },
+  {
+    "pattern": "@event:6260",
+    "label": "Ticket 01 Q3: Electrical Value Normalization"
+  },
+  {
+    "pattern": "@event:6443",
+    "label": "Answer Ticket 01 Q3: Raw String + Canonical Value"
+  },
+  {
+    "pattern": "@event:6767",
+    "label": "Ticket 01 Q4: Physical Storage Locations"
+  },
+  {
+    "pattern": "@event:7064",
+    "label": "Answer Ticket 01 Q4: Hierarchical Storage Tree"
+  },
+  {
+    "pattern": "@event:7413",
+    "label": "Ticket 01 Q5: Duplicate Bags Across Locations"
+  },
+  {
+    "pattern": "@event:7589",
+    "label": "Answer Ticket 01 Q5: Multi-Location Stock Lots"
+  },
+  {
+    "pattern": "@event:8032",
+    "label": "Ticket 01 Q6: Stock Lot Domain Term & Metadata"
+  },
+  {
+    "pattern": "@event:8037",
+    "label": "Answer Ticket 01 Q6: sgtm"
+  },
+  {
+    "pattern": "@event:8671",
+    "label": "Ticket 01 Confirm Resolution"
+  },
+  {
+    "pattern": "@event:8675",
+    "label": "Answer Ticket 01 Confirm: yes"
+  },
+  {
+    "pattern": "@event:9397",
+    "label": "Ticket 01 Resolved: Component Taxonomy & Schema"
+  },
+  {
+    "pattern": "@event:9420",
+    "label": "Session Cleared (/clear -> Ticket 02)"
+  },
+  {
+    "pattern": "@event:9431",
+    "label": "Submit Command: /wayfinder (Ticket 02)"
+  },
+  {
+    "pattern": "@event:10379",
+    "label": "Ticket 02 Q1: BOM Line Linking & Partial Kits"
+  },
+  {
+    "pattern": "@event:10384",
+    "label": "Answer Ticket 02 Q1: sgtm"
+  },
+  {
+    "pattern": "@event:10763",
+    "label": "Ticket 02 Q2: 5-State BOM Fulfillment Status"
+  },
+  {
+    "pattern": "@event:10768",
+    "label": "Answer Ticket 02 Q2: sgtm"
+  },
+  {
+    "pattern": "@event:11283",
+    "label": "Ticket 02 Q3: Substitutions, Partial Allocations & Split Line"
+  },
+  {
+    "pattern": "@event:11289",
+    "label": "Answer Ticket 02 Q3: sgtm"
+  },
+  {
+    "pattern": "@event:11659",
+    "label": "Ticket 02 Q4: 6-Stage Build Lifecycle & Bench Log"
+  },
+  {
+    "pattern": "@event:11664",
+    "label": "Answer Ticket 02 Q4: sgtm"
+  },
+  {
+    "pattern": "@event:11915",
+    "label": "Ticket 02 Q5: Cloning a Kit Build"
+  },
+  {
+    "pattern": "@event:11925",
+    "label": "Answer Ticket 02 Q5: sgtm"
+  },
+  {
+    "pattern": "@event:13000",
+    "label": "Ticket 02 Resolved: BOM Matching & Build Lifecycle"
+  },
+  {
+    "pattern": "@event:13023",
+    "label": "Session Cleared (/clear -> Ticket 03)"
+  },
+  {
+    "pattern": "@event:13034",
+    "label": "Submit Command: /wayfinder (Ticket 03)"
+  },
+  {
+    "pattern": "@event:14264",
+    "label": "Ticket 03 Q1: Staged Component CSV Import"
+  },
+  {
+    "pattern": "@event:14268",
+    "label": "Answer Ticket 03 Q1: yes"
+  },
+  {
+    "pattern": "@event:14560",
+    "label": "Ticket 03 Q2: Kit Build BOM CSV Import & Designator Grouping"
+  },
+  {
+    "pattern": "@event:14564",
+    "label": "Answer Ticket 03 Q2: yes"
+  },
+  {
+    "pattern": "@event:14969",
+    "label": "Ticket 03 Q3: Multi-Build Shopping List Aggregation"
+  },
+  {
+    "pattern": "@event:14974",
+    "label": "Answer Ticket 03 Q3: yes"
+  },
+  {
+    "pattern": "@event:15323",
+    "label": "Ticket 03 Q4: Shopping List Overrides, Export & Receiving"
+  },
+  {
+    "pattern": "@event:15327",
+    "label": "Answer Ticket 03 Q4: yes"
+  },
+  {
+    "pattern": "@event:16270",
+    "label": "Ticket 03 Resolved: CSV Import & Shopping List"
+  },
+  {
+    "pattern": "@event:16294",
+    "label": "Session Cleared (/clear -> Ticket 04)"
+  },
+  {
+    "pattern": "@event:16305",
+    "label": "Submit Command: /wayfinder (Ticket 04)"
+  },
+  {
+    "pattern": "@event:17535",
+    "label": "Ticket 04 Q1: Axum, Maud & Vendored HTMX Stack"
+  },
+  {
+    "pattern": "@event:17541",
+    "label": "Answer Ticket 04 Q1: sgtm"
+  },
+  {
+    "pattern": "@event:17813",
+    "label": "Ticket 04 Q2: Local Turso Driver & Migrations"
+  },
+  {
+    "pattern": "@event:17815",
+    "label": "Answer Ticket 04 Q2: crates.io/crates/turso"
+  },
+  {
+    "pattern": "@event:18651",
+    "label": "Ticket 04 Q3: Unified Data Directory & ZIP Backup"
+  },
+  {
+    "pattern": "@event:18657",
+    "label": "Answer Ticket 04 Q3: sgtm"
+  },
+  {
+    "pattern": "@event:19233",
+    "label": "Ticket 04 Q4: 5 Deep Domain Modules & In-Memory Tests"
+  },
+  {
+    "pattern": "@event:19239",
+    "label": "Answer Ticket 04 Q4: sgtm"
+  },
+  {
+    "pattern": "@event:20092",
+    "label": "Ticket 04 Resolved: Rust + HTMX + Turso Architecture"
+  },
+  {
+    "pattern": "@event:20115",
+    "label": "Session Cleared (/clear -> Ticket 05)"
+  },
+  {
+    "pattern": "@event:20126",
+    "label": "Submit Command: /wayfinder (Ticket 05)"
+  },
+  {
+    "pattern": "@event:24411",
+    "label": "UI Prototype Generation Complete (prototype-ui.html)"
+  },
+  {
+    "pattern": "@event:24909",
+    "label": "Ticket 05 Prototype Ready (Variants A, B, C)"
+  },
+  {
+    "pattern": "@event:24948",
+    "label": "Request: Open Prototype in Browser"
+  },
+  {
+    "pattern": "@event:25252",
+    "label": "Ticket 05 Q1: Overall Workbench Layout"
+  },
+  {
+    "pattern": "@event:25254",
+    "label": "Answer Ticket 05 Q1: Variant A"
+  },
+  {
+    "pattern": "@event:25600",
+    "label": "Ticket 05 Q2: Parametric Search & Multi-Lot Steppers"
+  },
+  {
+    "pattern": "@event:25606",
+    "label": "Answer Ticket 05 Q2: sgtm"
+  },
+  {
+    "pattern": "@event:26067",
+    "label": "Ticket 05 Q3: BOM Allocation & Active Bench Checklist"
+  },
+  {
+    "pattern": "@event:26072",
+    "label": "Answer Ticket 05 Q3: sgtm"
+  },
+  {
+    "pattern": "@event:27192",
+    "label": "Ticket 05 Resolved: All 5 Wayfinder Decisions Complete"
+  },
+  {
+    "pattern": "@event:27217",
+    "label": "Session Cleared (/clear -> /to-spec)"
+  },
+  {
+    "pattern": "@event:27226",
+    "label": "Submit Command: /to-spec"
+  },
+  {
+    "pattern": "@event:27964",
+    "label": "Confirm Specification Outline (spec.md)"
+  },
+  {
+    "pattern": "@event:27973",
+    "label": "Answer /to-spec: go ahead"
+  },
+  {
+    "pattern": "@event:29875",
+    "label": "Specification Published (.scratch/audio-inventory/spec.md)"
+  },
+  {
+    "pattern": "@event:29899",
+    "label": "Session Cleared (/clear -> /to-tickets)"
+  },
+  {
+    "pattern": "@event:29907",
+    "label": "Submit Command: /to-tickets"
+  },
+  {
+    "pattern": "@event:31043",
+    "label": "Confirm 8 Vertical-Slice Implementation Tickets"
+  },
+  {
+    "pattern": "@event:31052",
+    "label": "Answer /to-tickets: go ahead"
+  },
+  {
+    "pattern": "@event:33719",
+    "label": "8 Implementation Tickets Published (.scratch/audio-inventory/issues/)"
+  },
+  {
+    "pattern": "@event:33746",
+    "label": "Session Cleared (/clear -> /implement-spec)"
+  },
+  {
+    "pattern": "@event:33754",
+    "label": "Submit Command: /implement-spec"
+  },
+  {
+    "pattern": "@event:47858",
+    "label": "All 8 Tickets Implemented -> Launch Parallel /code-review"
+  },
+  {
+    "pattern": "@event:52490",
+    "label": "Code Review & Fixes Complete"
+  },
+  {
+    "pattern": "@event:54129",
+    "label": "Implementation & Code Review Summary (41 Passing Tests)"
+  },
+  {
+    "pattern": "@event:54170",
+    "label": "Session Cleared (/clear -> Browser Testing)"
+  },
+  {
+    "pattern": "@event:54171",
+    "label": "Submit Prompt: please test this site in a web browser"
+  },
+  {
+    "pattern": "@event:68078",
+    "label": "Browser Testing & Live HTMX Fixes Complete"
+  },
+  {
+    "pattern": "@event:68546",
+    "label": "Browser Verification Summary Complete"
   }
 ]

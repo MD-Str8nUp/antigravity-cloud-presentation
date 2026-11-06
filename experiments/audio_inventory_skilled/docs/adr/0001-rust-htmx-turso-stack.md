@@ -1,0 +1,3 @@
+# Rust Backend, Server-Rendered HTML with HTMX, and Local Turso Database
+
+We are building the audio electronics inventory and DIY kit build tracker as a single-user, local-first web application using a Rust backend (`axum` + `maud`) serving server-rendered HTML augmented with HTMX, persisted in a local Turso database via the native Rust `turso` crate (`turso::Builder::new_local`). This stack keeps runtime overhead minimal, avoids client-side SPA state synchronization complexity for tabular/form-heavy inventory workflows, and provides a single self-contained binary with embedded local SQL storage.

@@ -396,6 +396,7 @@ def auto_inject_markers(
     rolling_window = ""
 
     idx = 0
+    split_offset = 0
     while idx < len(events):
         ev = events[idx]
         if target_idx < len(marker_specs) and len(ev) >= 3 and ev[1] == "o":
@@ -403,12 +404,23 @@ def auto_inject_markers(
             rolling_window = (rolling_window + clean_chunk)[-1500:]
             for lookahead in range(target_idx, min(len(marker_specs), target_idx + 2)):
                 label, pattern = marker_specs[lookahead]
-                if pattern.search(rolling_window):
+                pat_raw = pattern.pattern
+                matched = False
+                if pat_raw.startswith("@event:"):
+                    want_orig_idx = int(pat_raw.split(":", 1)[1])
+                    if idx - split_offset == want_orig_idx:
+                        matched = True
+                elif pattern.search(rolling_window):
+                    matched = True
+
+                if matched:
+                    prev_len = len(events)
                     place_idx = (
                         advance_past_paste_redraw(events, idx, version)
                         if (insert_after and not raw_match)
                         else idx
                     )
+                    split_offset += len(events) - prev_len
                     placements.setdefault(place_idx, []).append(label)
                     injected.append(label)
                     target_idx = lookahead + 1
@@ -707,12 +719,18 @@ def tighten_paste_delays(
         elif next_has_g_badge and old_dt > pre_paste_dt:
             target_dt = pre_paste_dt
             reason = "agy typed prompt start"
-        elif prev_is_marker and "/clear" in prev_marker_label and old_dt > pre_paste_dt:
-            target_dt = pre_paste_dt
-            reason = "agy /clear execution"
-        elif prev_is_marker and input_clear_re.match(s) and old_dt > submit_dt:
+        elif prev_is_marker and (
+            input_clear_re.match(s)
+            or any(
+                k in prev_marker_label
+                for k in ("answer ", "submit ", "run command", "paste command", "request:")
+            )
+        ) and old_dt > submit_dt:
             target_dt = submit_dt
-            reason = "agy prompt submit"
+            reason = "post-marker submit"
+        elif prev_is_marker and old_dt > pre_paste_dt:
+            target_dt = pre_paste_dt
+            reason = "post-marker action start"
 
         if target_dt is not None:
             set_event_dt(events, version, idx, target_dt)

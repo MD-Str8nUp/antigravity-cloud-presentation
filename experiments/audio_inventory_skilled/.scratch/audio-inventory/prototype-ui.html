@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- MANDATORY: Declare support for both light and dark themes -->
+  <meta name="color-scheme" content="light dark">
+  <title>PROTOTYPE — Audio Inventory & Kit Builds (HTMX UI Variants)</title>
+  <!--
+    PROTOTYPE PLAN (Ticket 05):
+    Three structurally distinct UI variants of the server-rendered HTMX workbench
+    (Component Parametric Search & Inline Stock Lot Adjustment, Kit Build BOM Readiness & Allocation,
+    and Active Bench Build Checklist), switchable via ?variant=A|B|C and a floating bottom switcher.
+  -->
+  <style>
+    :root {
+      /* Raw light/dark palette tokens */
+      --bg-canvas-light: #f6f7f9;
+      --bg-canvas-dark: #0f1217;
+      --bg-surface-light: #ffffff;
+      --bg-surface-dark: #171b22;
+      --bg-subtle-light: #eef1f5;
+      --bg-subtle-dark: #1f2530;
+      --text-main-light: #14181f;
+      --text-main-dark: #e9edf4;
+      --text-muted-light: #525d6f;
+      --text-muted-dark: #94a0b4;
+      --border-light: #d5dce6;
+      --border-dark: #2c3444;
+
+      --brand-light: #1d4ed8;
+      --brand-dark: #60a5fa;
+      --brand-text-light: #ffffff;
+      --brand-text-dark: #0b192c;
+
+      --ok-bg-light: #dcfce7;
+      --ok-bg-dark: #064e3b;
+      --ok-text-light: #166534;
+      --ok-text-dark: #6ee7b7;
+
+      --warn-bg-light: #fef3c7;
+      --warn-bg-dark: #451a03;
+      --warn-text-light: #92400e;
+      --warn-text-dark: #fcd34d;
+
+      --err-bg-light: #fee2e2;
+      --err-bg-dark: #450a0a;
+      --err-text-light: #991b1b;
+      --err-text-dark: #fca5a5;
+
+      --info-bg-light: #e0e7ff;
+      --info-bg-dark: #1e1b4b;
+      --info-text-light: #1e40af;
+      --info-text-dark: #93c5fd;
+
+      /* Fallback assignments for browsers without light-dark() */
+      --bg-canvas: var(--bg-canvas-light);
+      --bg-surface: var(--bg-surface-light);
+      --bg-subtle: var(--bg-subtle-light);
+      --text-main: var(--text-main-light);
+      --text-muted: var(--text-muted-light);
+      --border-color: var(--border-light);
+      --brand-color: var(--brand-light);
+      --brand-text: var(--brand-text-light);
+      --ok-bg: var(--ok-bg-light);
+      --ok-text: var(--ok-text-light);
+      --warn-bg: var(--warn-bg-light);
+      --warn-text: var(--warn-text-light);
+      --err-bg: var(--err-bg-light);
+      --err-text: var(--err-text-light);
+      --info-bg: var(--info-bg-light);
+      --info-text: var(--info-text-light);
+
+      @media (prefers-color-scheme: dark) {
+        --bg-canvas: var(--bg-canvas-dark);
+        --bg-surface: var(--bg-surface-dark);
+        --bg-subtle: var(--bg-subtle-dark);
+        --text-main: var(--text-main-dark);
+        --text-muted: var(--text-muted-dark);
+        --border-color: var(--border-dark);
+        --brand-color: var(--brand-dark);
+        --brand-text: var(--brand-text-dark);
+        --ok-bg: var(--ok-bg-dark);
+        --ok-text: var(--ok-text-dark);
+        --warn-bg: var(--warn-bg-dark);
+        --warn-text: var(--warn-text-dark);
+        --err-bg: var(--err-bg-dark);
+        --err-text: var(--err-text-dark);
+        --info-bg: var(--info-bg-dark);
+        --info-text: var(--info-text-dark);
+      }
+
+      @supports (color: light-dark(white, black)) {
+        --bg-canvas: light-dark(var(--bg-canvas-light), var(--bg-canvas-dark));
+        --bg-surface: light-dark(var(--bg-surface-light), var(--bg-surface-dark));
+        --bg-subtle: light-dark(var(--bg-subtle-light), var(--bg-subtle-dark));
+        --text-main: light-dark(var(--text-main-light), var(--text-main-dark));
+        --text-muted: light-dark(var(--text-muted-light), var(--text-muted-dark));
+        --border-color: light-dark(var(--border-light), var(--border-dark));
+        --brand-color: light-dark(var(--brand-light), var(--brand-dark));
+        --brand-text: light-dark(var(--brand-text-light), var(--brand-text-dark));
+        --ok-bg: light-dark(var(--ok-bg-light), var(--ok-bg-dark));
+        --ok-text: light-dark(var(--ok-text-light), var(--ok-text-dark));
+        --warn-bg: light-dark(var(--warn-bg-light), var(--warn-bg-dark));
+        --warn-text: light-dark(var(--warn-text-light), var(--warn-text-dark));
+        --err-bg: light-dark(var(--err-bg-light), var(--err-bg-dark));
+        --err-text: light-dark(var(--err-text-light), var(--err-text-dark));
+        --info-bg: light-dark(var(--info-bg-light), var(--info-bg-dark));
+        --info-text: light-dark(var(--info-text-light), var(--info-text-dark));
+      }
+
+      /* MANDATORY: Apply color-scheme to :root for viewport-wide native UI theming */
+      color-scheme: light dark;
+      accent-color: var(--brand-color);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg-canvas);
+      color: var(--text-main);
+      accent-color: var(--brand-color);
+      padding-block-end: 5.5rem;
+    }
+
+    code, .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    /* Fallback for older browsers without accent-color */
+    @supports not (accent-color: var(--brand-color)) {
+      input[type="checkbox"].visually-hidden {
+        position: absolute !important;
+        clip-path: inset(50%) !important;
+        overflow: hidden !important;
+        width: 1px !important;
+        height: 1px !important;
+        margin: -1px !important;
+        padding: 0 !important;
+        border: 0 !important;
+        white-space: nowrap !important;
+      }
+      label.checkbox-fallback {
+        position: relative;
+        padding-left: 1.75rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+      }
+      label.checkbox-fallback input[type="checkbox"] + span::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1.1rem;
+        height: 1.1rem;
+        border: 2px solid var(--border-color);
+        background: var(--bg-surface);
+        border-radius: 4px;
+      }
+      label.checkbox-fallback input[type="checkbox"]:focus-visible + span::before {
+        outline: 2px solid var(--brand-color);
+        outline-offset: 2px;
+      }
+      label.checkbox-fallback input[type="checkbox"]:checked + span::before {
+        background-color: var(--brand-color);
+        border-color: var(--brand-color);
+      }
+      label.checkbox-fallback input[type="checkbox"]:checked + span::after {
+        content: "✓";
+        position: absolute;
+        left: 0.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--brand-text);
+        font-weight: bold;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Native modal dialog scroll containment rules */
+    dialog:modal {
+      overscroll-behavior: contain;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.25rem;
+      max-inline-size: 520px;
+      inline-size: 92vw;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    }
+    dialog::backdrop {
+      overflow: hidden;
+      overscroll-behavior: contain;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Responsive data table pattern */
+    .table-wrapper {
+      overflow: auto;
+      max-inline-size: 100%;
+      max-block-size: min(560px, 78vh);
+      container-type: inline-size;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-surface);
+    }
+
+    table {
+      inline-size: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.92rem;
+    }
+
+    caption {
+      text-align: start;
+      padding: 0.55rem 0.75rem;
+      font-weight: 600;
+      background: var(--bg-subtle);
+      border-block-end: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    thead {
+      position: sticky;
+      inset-block-start: 0;
+      z-index: 2;
+      background: var(--bg-subtle);
+    }
+
+    th, td {
+      padding: 0.5rem 0.65rem;
+      border-block-end: 1px solid var(--border-color);
+      text-align: start;
+      vertical-align: middle;
+    }
+
+    thead th {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+
+    tbody th {
+      position: sticky;
+      inset-inline-start: 0;
+      z-index: 1;
+      background: var(--bg-surface);
+      font-weight: 600;
+    }
+
+    tbody tr:hover td,
+    tbody tr:hover th {
+      background: var(--bg-subtle);
+    }
+
+    @container (width < 600px) {
+      table, thead, tbody, tr, th, td {
+        display: block;
+      }
+      thead {
+        display: none;
+      }
+      tr {
+        margin-block-end: 0.85rem;
+        border: 1px solid var(--border-color);
+      }
+      tbody th {
+        position: sticky;
+        inset-block-start: 0;
+        z-index: 2;
+        background: var(--bg-subtle);
+      }
+      td:nth-child(2)::before { content: var(--label-2, "Detail") ": "; font-weight: 600; color: var(--text-muted); }
+      td:nth-child(3)::before { content: var(--label-3, "Spec") ": "; font-weight: 600; color: var(--text-muted); }
+      td:nth-child(4)::before { content: var(--label-4, "Location") ": "; font-weight: 600; color: var(--text-muted); }
+      td:nth-child(5)::before { content: var(--label-5, "Stock") ": "; font-weight: 600; color: var(--text-muted); }
+      td:nth-child(6)::before { content: var(--label-6, "Action") ": "; font-weight: 600; color: var(--text-muted); }
+    }
+
+    /* Prototype top banner & HTMX inspector bar */
+    .proto-banner {
+      background: var(--bg-surface);
+      border-block-end: 1px solid var(--border-color);
+      padding: 0.55rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .proto-badge {
+      background: var(--warn-bg);
+      color: var(--warn-text);
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.76rem;
+      letter-spacing: 0.04em;
+    }
+    .htmx-log {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      background: var(--info-bg);
+      color: var(--info-text);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Buttons, pills, badges */
+    button, select, input[type="text"], input[type="search"], input[type="number"] {
+      font: inherit;
+      color: inherit;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      padding: 0.3rem 0.55rem;
+    }
+    button {
+      cursor: pointer;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    button:hover {
+      background: var(--bg-subtle);
+    }
+    button.primary {
+      background: var(--brand-color);
+      color: var(--brand-text);
+      border-color: var(--brand-color);
+    }
+    button.xs {
+      padding: 0.15rem 0.42rem;
+      font-size: 0.78rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge.ok { background: var(--ok-bg); color: var(--ok-text); }
+    .badge.warn { background: var(--warn-bg); color: var(--warn-text); }
+    .badge.err { background: var(--err-bg); color: var(--err-text); }
+    .badge.info { background: var(--info-bg); color: var(--info-text); }
+    .badge.neutral { background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border-color); }
+
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .stepper button {
+      border: none;
+      border-radius: 0;
+      padding: 0.15rem 0.45rem;
+      background: var(--bg-subtle);
+    }
+    .stepper span {
+      padding: 0.1rem 0.5rem;
+      font-weight: 700;
+      min-inline-size: 2.2rem;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Variant Layouts */
+    .workspace {
+      padding: 1rem;
+      max-inline-size: 1600px;
+      margin: 0 auto;
+    }
+
+    /* Variant A: Top Nav + Full-Width Dense Table + Slide-over Drawer */
+    .va-subnav {
+      display: flex;
+      gap: 0.4rem;
+      border-block-end: 1px solid var(--border-color);
+      padding-block-end: 0.65rem;
+      margin-block-end: 0.85rem;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .va-tabs {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .va-tabs button[aria-selected="true"] {
+      background: var(--brand-color);
+      color: var(--brand-text);
+      border-color: var(--brand-color);
+    }
+    .va-filter-ribbon {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      background: var(--bg-surface);
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin-block-end: 0.85rem;
+    }
+    .va-grid-with-drawer {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 0.85rem;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .va-grid-with-drawer {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Variant B: Three-Pane IDE Layout */
+    .vb-shell {
+      display: grid;
+      grid-template-columns: 250px 1fr 360px;
+      gap: 0.75rem;
+      min-block-size: 76vh;
+      align-items: stretch;
+    }
+    @media (max-width: 1100px) {
+      .vb-shell {
+        grid-template-columns: 1fr;
+      }
+    }
+    .vb-pane {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .vb-pane-header {
+      padding: 0.55rem 0.75rem;
+      background: var(--bg-subtle);
+      border-block-end: 1px solid var(--border-color);
+      font-weight: 600;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .vb-pane-body {
+      padding: 0.65rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .tree-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      inline-size: 100%;
+      text-align: start;
+      padding: 0.32rem 0.5rem;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      margin-block-end: 2px;
+    }
+    .tree-item[aria-current="true"] {
+      background: var(--info-bg);
+      color: var(--info-text);
+      font-weight: 600;
+    }
+
+    /* Variant C: Split-Screen Kitting Console + High-Contrast Bench HUD */
+    .vc-split {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 0.85rem;
+      align-items: start;
+    }
+    @media (max-width: 1050px) {
+      .vc-split {
+        grid-template-columns: 1fr;
+      }
+    }
+    .vc-bench-hud {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    .designator-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: 5px;
+      border: 1px solid var(--border-color);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.85rem;
+      margin-inline-end: 0.35rem;
+      margin-block-end: 0.25rem;
+    }
+    .designator-chip.done {
+      background: var(--ok-bg);
+      color: var(--ok-text);
+      border-color: var(--ok-text);
+      text-decoration: line-through;
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.75rem;
+    }
+
+    /* Floating Prototype Switcher Bar (per prototype/UI.md) */
+    .prototype-switcher {
+      position: fixed;
+      inset-block-end: 1rem;
+      inset-inline-start: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #111827;
+      color: #f9fafb;
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      border: 1px solid #374151;
+      font-size: 0.85rem;
+    }
+    .prototype-switcher button {
+      background: #1f2937;
+      color: #f9fafb;
+      border: 1px solid #4b5563;
+      border-radius: 999px;
+      padding: 0.25rem 0.6rem;
+      font-weight: 600;
+    }
+    .prototype-switcher button:hover {
+      background: #374151;
+    }
+    .prototype-switcher .variant-label {
+      padding: 0 0.5rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Prototype Banner + Live Simulated HTMX Partial Swap Log -->
+  <header class="proto-banner">
+    <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;">
+      <span class="proto-badge">PROTOTYPE · TICKET 05</span>
+      <strong>Audio Electronics Inventory &amp; Kit Builds</strong>
+      <span style="color:var(--text-muted); font-size:0.85rem;" id="variant-subtitle"></span>
+    </div>
+    <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;">
+      <span class="htmx-log" id="htmx-indicator" aria-live="polite">
+        HX-Trigger ready · Click any stepper, status pill, or search input
+      </span>
+      <button type="button" class="xs" id="reset-state-btn">Reset Demo State</button>
+    </div>
+  </header>
+
+  <main class="workspace" id="app-root"></main>
+
+  <!-- Native Modal Dialog for BOM Line Substitution / Split -->
+  <dialog id="bom-action-dialog" closedby="any" aria-labelledby="bom-dialog-title">
+    <h2 id="bom-dialog-title" style="margin-block-start:0; font-size:1.05rem;">BOM Line Action</h2>
+    <div id="bom-dialog-content"></div>
+  </dialog>
+
+  <!-- Floating Bottom Variant Switcher Bar -->
+  <nav class="prototype-switcher" aria-label="Prototype UI Variant Switcher">
+    <button type="button" id="prev-variant-btn" title="Previous Variant (←)">←</button>
+    <span class="variant-label" id="switcher-label">A (Dense Workbench Table + Drawer)</span>
+    <button type="button" id="next-variant-btn" title="Next Variant (→)">→</button>
+  </nav>
+
+  <script>
+    // =========================================================================
+    // 1. PORTABLE DOMAIN & SPEC PARSER MODULE (Shared across all UI variants)
+    // =========================================================================
+    const VARIANTS = [
+      {
+        key: 'A',
+        name: 'Dense Workbench Table + Slide-over Inspector',
+        summary: 'Top horizontal surface tabs (Catalog, Kit Build BOM, Bench Checklist) with full-width sticky tables and a right-hand context drawer for multi-lot/split actions.'
+      },
+      {
+        key: 'B',
+        name: 'Three-Pane Master-Detail IDE Workbench',
+        summary: 'Persistent left tree (Storage Locations & Kit Builds), center list/table, and persistent right inspector pane swapped via hx-target="#inspector".'
+      },
+      {
+        key: 'C',
+        name: 'Split-Screen Kitting Console + Bench HUD',
+        summary: 'Side-by-side Kit Build BOM (left 60%) + Live Parametric Catalog Search (right 40%) for 1-click kitting/substitution, toggling into a high-contrast Bench HUD.'
+      }
+    ];
+
+    function parseSpecQuery(q) {
+      const raw = (q || '').trim();
+      if (!raw) return { raw: '', ohms: null, pf: null, canonical: null, tokens: [] };
+      const tokens = [];
+      let ohms = null;
+      let pf = null;
+      let canonical = null;
+
+      // Resistor shorthand e.g. 4k7, 4.7k, 4700R, 100kA
+      const rMatch = raw.match(/\b(\d+)([rRkKmM])(\d+)\b|\b(\d+(?:\.\d+)?)\s*([rRkKmM]?)\s*(?:ohm|Ω|[rR])?\b/i);
+      if (/\b\d+[kKmM]\d+\b/.test(raw)) {
+        const m = raw.match(/\b(\d+)([kKmM])(\d+)\b/);
+        const mult = m[2].toLowerCase() === 'k' ? 1e3 : 1e6;
+        ohms = (parseFloat(m[1] + '.' + m[3])) * mult;
+        canonical = `${m[1]}.${m[3]}${m[2].toLowerCase() === 'k' ? 'kΩ' : 'MΩ'}`;
+        tokens.push(`Value: ${canonical} (${ohms} Ω)`);
+      } else if (/\b(\d+(?:\.\d+)?)\s*([kKmM])\b/.test(raw) && !/nF|uF|pF/i.test(raw)) {
+        const m = raw.match(/\b(\d+(?:\.\d+)?)\s*([kKmM])\b/);
+        const mult = m[2].toLowerCase() === 'k' ? 1e3 : 1e6;
+        ohms = parseFloat(m[1]) * mult;
+        canonical = `${ parseFloat(m[1]) }${m[2].toLowerCase() === 'k' ? 'kΩ' : 'MΩ'}`;
+        tokens.push(`Value: ${canonical} (${ohms} Ω)`);
+      }
+
+      // Capacitor shorthand e.g. 47n, 0.047uF, 4n7
+      if (/\b(\d+)n(\d+)\b/i.test(raw)) {
+        const m = raw.match(/\b(\d+)n(\d+)\b/i);
+        const nf = parseFloat(m[1] + '.' + m[2]);
+        pf = nf * 1000;
+        canonical = `${nf}nF`;
+        tokens.push(`Capacitance: ${canonical} (${pf} pF)`);
+      } else if (/\b(\d+(?:\.\d+)?)\s*(pF|nF|uF|µF|n|u)\b/i.test(raw)) {
+        const m = raw.match(/\b(\d+(?:\.\d+)?)\s*(pF|nF|uF|µF|n|u)\b/i);
+        const val = parseFloat(m[1]);
+        const unit = m[2].toLowerCase();
+        if (unit.startsWith('p')) { pf = val; canonical = `${val}pF`; }
+        else if (unit.startsWith('n')) { pf = val * 1e3; canonical = `${val}nF`; }
+        else {
+          pf = val * 1e6;
+          canonical = (val < 1 && val * 1000 >= 1) ? `${+(val * 1000).toFixed(2)}nF` : `${val}µF`;
+        }
+        tokens.push(`Capacitance: ${canonical}`);
+      }
+
+      if (/\b1%\b/.test(raw)) tokens.push('Tolerance: 1%');
+      if (/\b1\/4W|0\.25W\b/i.test(raw)) tokens.push('Power: 0.25W');
+      if (/\bDIP-8\b/i.test(raw)) tokens.push('Package: DIP-8');
+
+      return { raw, ohms, pf, canonical, tokens };
+    }
+
+    function createInitialState() {
+      return {
+        // UI navigation state
+        activeTab: 'bom', // 'catalog' | 'bom' | 'bench'
+        searchQuery: '',
+        categoryFilter: 'All',
+        locationFilter: 'All',
+        selectedComponentId: 'comp-1',
+        selectedBomLineId: 'bom-2',
+        lastHtmxSwap: 'GET /builds/klon-centaur/bom -> 200 OK (maud fragment)',
+
+        // Kit Build header state
+        kitBuild: {
+          id: 'kit-klon',
+          name: 'Klon Centaur Professional Overdrive (#1)',
+          status: 'On the Bench (In Progress)',
+          locationPath: 'Workbench Shelf > Project Box #1 (Klon)',
+          attachments: [
+            { name: 'klon_centaur_schematic.pdf', kind: 'Schematic PDF' },
+            { name: 'aion_refractor_build_doc.pdf', kind: 'Build Doc' }
+          ]
+        },
+
+        // Catalog Components & Multi-Location Stock Lots
+        components: [
+          {
+            id: 'comp-1',
+            name: '4.7kΩ 1% 1/4W Metal Film Resistor',
+            category: 'Resistors',
+            subtype: 'Fixed',
+            package: 'Through-Hole',
+            rawSpecText: '4k7 1% 1/4W Metal Film',
+            canonicalValue: '4.7kΩ',
+            ohms: 4700,
+            pf: null,
+            specs: '1% · 0.25W · Metal Film',
+            lowStockThreshold: 20,
+            lots: [
+              { id: 'lot-1a', locationId: 'loc-r1', locationPath: 'Binder A > Page 2 (1k–10k)', quantity: 42, supplier: 'Tayda', partNo: 'A-2214' },
+              { id: 'lot-1b', locationId: 'loc-r2', locationPath: 'Crate B > Loose Surplus Bag', quantity: 15, supplier: 'Mouser', partNo: '271-4.7K-RC' }
+            ]
+          },
+          {
+            id: 'comp-2',
+            name: '47nF 63V WIMA MKS2 Film Capacitor',
+            category: 'Capacitors',
+            subtype: 'Film',
+            package: 'Through-Hole 5mm',
+            rawSpecText: '0.047uF / 47n 63V 5% Box Film',
+            canonicalValue: '47nF',
+            ohms: null,
+            pf: 47000,
+            specs: 'Film · 63V · 5% · 5mm pitch',
+            lowStockThreshold: 10,
+            lots: [
+              { id: 'lot-2a', locationId: 'loc-c1', locationPath: 'Drawer Cabinet 1 > Film Caps nF', quantity: 8, supplier: 'Mouser', partNo: '505-MKS2.047/63/5' }
+            ]
+          },
+          {
+            id: 'comp-3',
+            name: 'TL072IP Dual Low-Noise JFET Op-Amp',
+            category: 'Integrated Circuits (ICs)',
+            subtype: 'Op-Amp',
+            package: 'DIP-8',
+            rawSpecText: 'TL072IP Dual JFET Op-Amp DIP-8',
+            canonicalValue: 'TL072IP',
+            ohms: null,
+            pf: null,
+            specs: 'Dual Op-Amp · JFET Input · DIP-8',
+            lowStockThreshold: 5,
+            lots: [
+              { id: 'lot-3a', locationId: 'loc-ic', locationPath: 'Crate A > ESD Foam Box > Op-Amps', quantity: 6, supplier: 'DigiKey', partNo: '296-1775-5-ND' }
+            ]
+          },
+          {
+            id: 'comp-4',
+            name: '1N34A Germanium Clipping Diode (Matched VF)',
+            category: 'Semiconductors — Discrete',
+            subtype: 'Diodes',
+            package: 'DO-7 Axial',
+            rawSpecText: '1N34A Ge Diode Vf=0.32V',
+            canonicalValue: '1N34A',
+            ohms: null,
+            pf: null,
+            specs: 'Germanium · Vf=0.32V',
+            lowStockThreshold: 4,
+            lots: [
+              { id: 'lot-4a', locationId: 'loc-semi', locationPath: 'Crate A > Vintage Mojo Tin', quantity: 1, supplier: 'Small Bear', partNo: 'SB-1N34A' }
+            ]
+          },
+          {
+            id: 'comp-5',
+            name: 'BAT41 Schottky Clipping Diode',
+            category: 'Semiconductors — Discrete',
+            subtype: 'Schottky',
+            package: 'DO-35 Axial',
+            rawSpecText: 'BAT41 Schottky Diode Vf=0.34V',
+            canonicalValue: 'BAT41',
+            ohms: null,
+            pf: null,
+            specs: 'Schottky · Fast Clipping Substitute',
+            lowStockThreshold: 10,
+            lots: [
+              { id: 'lot-5a', locationId: 'loc-semi', locationPath: 'Drawer Cabinet 2 > Diodes', quantity: 24, supplier: 'Mouser', partNo: '512-BAT41' }
+            ]
+          },
+          {
+            id: 'comp-6',
+            name: '100kΩ Dual-Gang Linear Potentiometer (16mm)',
+            category: 'Potentiometers & Encoders',
+            subtype: 'Rotary Pots',
+            package: '16mm PCB Right-Angle',
+            rawSpecText: '100kB Dual-Gang 16mm Alpha Pot',
+            canonicalValue: '100kΩ Dual B',
+            ohms: 100000,
+            pf: null,
+            specs: 'Taper B (Linear) · Dual-Gang · 16mm Knurled',
+            lowStockThreshold: 2,
+            lots: [
+              { id: 'lot-6a', locationId: 'loc-pots', locationPath: 'Crate C > Pots & Switches Bag', quantity: 0, supplier: 'Tayda', partNo: 'A-1988' }
+            ]
+          }
+        ],
+
+        // Kit Build BOM Lines
+        bomLines: [
+          {
+            id: 'bom-1',
+            designators: 'R1, R2, R5, R11',
+            designatorList: ['R1', 'R2', 'R5', 'R11'],
+            checkedDesignators: ['R1', 'R2', 'R5', 'R11'],
+            category: 'Resistors',
+            rawSpecText: '4k7 1% 1/4W',
+            qtyRequired: 4,
+            qtyAllocated: 4,
+            status: 'Installed',
+            componentId: 'comp-1',
+            sourceLotId: 'lot-1a',
+            substitutionNote: '',
+            stageGroup: 'Stage 1: Low-Profile Resistors & Diodes'
+          },
+          {
+            id: 'bom-2',
+            designators: 'C3, C6, C7',
+            designatorList: ['C3', 'C6', 'C7'],
+            checkedDesignators: ['C3'],
+            category: 'Capacitors',
+            rawSpecText: '0.047uF Film',
+            qtyRequired: 3,
+            qtyAllocated: 3,
+            status: 'Picked',
+            componentId: 'comp-2',
+            sourceLotId: 'lot-2a',
+            substitutionNote: '',
+            stageGroup: 'Stage 2: IC Sockets & Film Capacitors'
+          },
+          {
+            id: 'bom-3',
+            designators: 'IC1, IC2',
+            designatorList: ['IC1', 'IC2'],
+            checkedDesignators: [],
+            category: 'Integrated Circuits (ICs)',
+            rawSpecText: 'TL072 Dual Op-Amp DIP-8',
+            qtyRequired: 2,
+            qtyAllocated: 2,
+            status: 'Reserved',
+            componentId: 'comp-3',
+            sourceLotId: 'lot-3a',
+            substitutionNote: '',
+            stageGroup: 'Stage 2: IC Sockets & Film Capacitors'
+          },
+          {
+            id: 'bom-4',
+            designators: 'D1, D2',
+            designatorList: ['D1', 'D2'],
+            checkedDesignators: [],
+            category: 'Semiconductors — Discrete',
+            rawSpecText: '1N34A Germanium Diode',
+            qtyRequired: 2,
+            qtyAllocated: 1,
+            status: 'Reserved',
+            componentId: 'comp-4',
+            sourceLotId: 'lot-4a',
+            substitutionNote: 'Only 1x 1N34A left in Vintage Mojo Tin — split line or substitute BAT41',
+            stageGroup: 'Stage 1: Low-Profile Resistors & Diodes'
+          },
+          {
+            id: 'bom-5',
+            designators: 'VR1 (GAIN)',
+            designatorList: ['VR1'],
+            checkedDesignators: [],
+            category: 'Potentiometers & Encoders',
+            rawSpecText: '100kB Dual-Gang 16mm PCB',
+            qtyRequired: 1,
+            qtyAllocated: 0,
+            status: 'Unallocated',
+            componentId: 'comp-6',
+            sourceLotId: 'lot-6a',
+            substitutionNote: '',
+            stageGroup: 'Stage 3: Pots, Off-Board Hardware & Enclosure'
+          },
+          {
+            id: 'bom-6',
+            designators: 'PCB1, ENC1',
+            designatorList: ['PCB1', 'ENC1'],
+            checkedDesignators: ['PCB1'],
+            category: 'Enclosures, Knobs & Mechanical Hardware',
+            rawSpecText: 'Refractor PCB + Pre-Drilled 125B Enclosure',
+            qtyRequired: 1,
+            qtyAllocated: 1,
+            status: 'Included in Kit',
+            componentId: null,
+            sourceLotId: null,
+            substitutionNote: 'Supplied in Aion partial kit box',
+            stageGroup: 'Stage 3: Pots, Off-Board Hardware & Enclosure'
+          }
+        ],
+
+        // Bench Log Entries
+        benchLogs: [
+          {
+            id: 'log-1',
+            timestamp: '12:15',
+            type: 'Measurement / Voltage Reading',
+            body: 'MAX1044 charge pump Pin 8 = +17.84V, Pin 5 = -8.72V before inserting TL072s. Within spec.'
+          },
+          {
+            id: 'log-2',
+            timestamp: '12:32',
+            type: 'Modification',
+            body: 'Planning to split D1/D2 clipping pair or test BAT41 asymmetric pair on socketed pads.'
+          }
+        ]
+      };
+    }
+
+    let state = createInitialState();
+
+    // Helper functions for stock math
+    function getComponentById(id) {
+      return state.components.find(c => c.id === id) || null;
+    }
+
+    function getTotalOnHand(comp) {
+      if (!comp) return 0;
+      return comp.lots.reduce((sum, l) => sum + l.quantity, 0);
+    }
+
+    function getReservedQuantity(compId) {
+      return state.bomLines
+        .filter(b => b.componentId === compId && b.status === 'Reserved')
+        .reduce((sum, b) => sum + b.qtyAllocated, 0);
+    }
+
+    function getAvailableStock(comp) {
+      if (!comp) return 0;
+      return Math.max(0, getTotalOnHand(comp) - getReservedQuantity(comp.id));
+    }
+
+    function logHtmx(method, path, target) {
+      state.lastHtmxSwap = `${method} ${path} -> hx-target="${target}" (maud fragment swapped)`;
+      const el = document.getElementById('htmx-indicator');
+      if (el) el.textContent = state.lastHtmxSwap;
+    }
+
+    // =========================================================================
+    // 2. DOMAIN ACTIONS (Simulated HTMX Endpoints)
+    // =========================================================================
+    function adjustLotQty(compId, lotId, delta) {
+      const comp = getComponentById(compId);
+      if (!comp) return;
+      const lot = comp.lots.find(l => l.id === lotId);
+      if (!lot) return;
+      lot.quantity = Math.max(0, lot.quantity + delta);
+      logHtmx('POST', `/catalog/lots/${lotId}/delta?by=${delta > 0 ? '+' + delta : delta}`, `#comp-row-${compId}`);
+      render();
+    }
+
+    function mergeDuplicateLots(compId) {
+      const comp = getComponentById(compId);
+      if (!comp || comp.lots.length < 2) return;
+      const total = getTotalOnHand(comp);
+      comp.lots = [
+        {
+          ...comp.lots[0],
+          quantity: total
+        }
+      ];
+      logHtmx('POST', `/catalog/components/${compId}/merge-lots`, `#comp-row-${compId}`);
+      render();
+    }
+
+    function transitionBomStatus(bomId, nextStatus) {
+      const line = state.bomLines.find(b => b.id === bomId);
+      if (!line) return;
+      const prevStatus = line.status;
+      if (prevStatus === nextStatus) return;
+
+      const comp = getComponentById(line.componentId);
+      const lot = comp ? (comp.lots.find(l => l.id === line.sourceLotId) || comp.lots[0]) : null;
+
+      // Deduct or return physical Stock Lot quantity when crossing the Picked/Installed boundary
+      const wasDeducted = (prevStatus === 'Picked' || prevStatus === 'Installed');
+      const willBeDeducted = (nextStatus === 'Picked' || nextStatus === 'Installed');
+
+      if (!wasDeducted && willBeDeducted && lot) {
+        const pullQty = Math.min(lot.quantity, line.qtyRequired);
+        lot.quantity = Math.max(0, lot.quantity - pullQty);
+        line.qtyAllocated = pullQty;
+        line.sourceLotId = lot.id;
+      } else if (wasDeducted && !willBeDeducted && lot) {
+        lot.quantity += line.qtyAllocated;
+      }
+
+      if (nextStatus === 'Unallocated') {
+        line.qtyAllocated = 0;
+      } else if (nextStatus === 'Reserved' && comp) {
+        const avail = getAvailableStock(comp) + (prevStatus === 'Reserved' ? line.qtyAllocated : 0);
+        line.qtyAllocated = Math.min(line.qtyRequired, avail);
+      } else if (nextStatus === 'Installed') {
+        line.checkedDesignators = [...line.designatorList];
+      }
+
+      line.status = nextStatus;
+      logHtmx('PATCH', `/builds/${state.kitBuild.id}/bom/${bomId}/status (${prevStatus} -> ${nextStatus})`, `#bom-row-${bomId}`);
+      render();
+    }
+
+    function splitBomLine(bomId) {
+      const idx = state.bomLines.findIndex(b => b.id === bomId);
+      if (idx === -1) return;
+      const line = state.bomLines[idx];
+      if (line.qtyRequired < 2) return;
+
+      const firstHalf = Math.ceil(line.qtyRequired / 2);
+      const secondHalf = line.qtyRequired - firstHalf;
+      const des1 = line.designatorList.slice(0, firstHalf);
+      const des2 = line.designatorList.slice(firstHalf);
+
+      line.qtyRequired = firstHalf;
+      line.qtyAllocated = Math.min(line.qtyAllocated, firstHalf);
+      line.designatorList = des1;
+      line.designators = des1.join(', ');
+
+      const newLine = {
+        id: `${line.id}-split-${Date.now().toString().slice(-3)}`,
+        designators: des2.join(', ') || `${line.designators} (B)`,
+        designatorList: des2.length ? des2 : ['D2'],
+        checkedDesignators: [],
+        category: line.category,
+        rawSpecText: line.rawSpecText,
+        qtyRequired: secondHalf,
+        qtyAllocated: 0,
+        status: 'Unallocated',
+        componentId: 'comp-5', // Pre-link to BAT41 substitute candidate
+        sourceLotId: 'lot-5a',
+        substitutionNote: 'Split from D1/D2: substituted BAT41 Schottky for asymmetric clipping',
+        stageGroup: line.stageGroup
+      };
+
+      state.bomLines.splice(idx + 1, 0, newLine);
+      state.selectedBomLineId = newLine.id;
+      logHtmx('POST', `/builds/${state.kitBuild.id}/bom/${bomId}/split`, `#bom-table-body`);
+      render();
+    }
+
+    function substituteBomComponent(bomId, newCompId, note) {
+      const line = state.bomLines.find(b => b.id === bomId);
+      const comp = getComponentById(newCompId);
+      if (!line || !comp) return;
+      line.componentId = comp.id;
+      line.sourceLotId = comp.lots[0]?.id || null;
+      line.substitutionNote = note || `Substituted ${comp.canonicalValue} (${comp.name})`;
+      logHtmx('PATCH', `/builds/${state.kitBuild.id}/bom/${bomId}/substitute`, `#bom-row-${bomId}`);
+      render();
+    }
+
+    function toggleDesignatorInstalled(bomId, des) {
+      const line = state.bomLines.find(b => b.id === bomId);
+      if (!line) return;
+      const set = new Set(line.checkedDesignators);
+      if (set.has(des)) set.delete(des);
+      else set.add(des);
+      line.checkedDesignators = Array.from(set);
+      if (line.checkedDesignators.length === line.designatorList.length) {
+        transitionBomStatus(bomId, 'Installed');
+        return;
+      }
+      logHtmx('PATCH', `/builds/${state.kitBuild.id}/bench/${bomId}/designator/${des}`, `#bench-row-${bomId}`);
+      render();
+    }
+
+    function addBenchLog(type, body) {
+      if (!body.trim()) return;
+      const now = new Date();
+      const ts = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      state.benchLogs.unshift({
+        id: `log-${Date.now()}`,
+        timestamp: ts,
+        type,
+        body: body.trim()
+      });
+      logHtmx('POST', `/builds/${state.kitBuild.id}/bench-logs`, `#bench-log-list`);
+      render();
+    }
+
+    // =========================================================================
+    // 3. FILTERING & RENDERING HELPERS
+    // =========================================================================
+    function getFilteredComponents() {
+      const parsed = parseSpecQuery(state.searchQuery);
+      return state.components.filter(c => {
+        if (state.categoryFilter !== 'All' && c.category !== state.categoryFilter) return false;
+        if (state.locationFilter !== 'All' && !c.lots.some(l => l.locationPath.startsWith(state.locationFilter))) return false;
+        if (!parsed.raw) return true;
+        if (parsed.ohms !== null && c.ohms === parsed.ohms) return true;
+        if (parsed.pf !== null && c.pf === parsed.pf) return true;
+        const hay = `${c.name} ${c.rawSpecText} ${c.canonicalValue} ${c.package} ${c.specs}`.toLowerCase();
+        return hay.includes(parsed.raw.toLowerCase());
+      });
+    }
+
+    function renderStatusBadge(status) {
+      const map = {
+        'Installed': 'ok',
+        'Picked': 'info',
+        'Reserved': 'warn',
+        'Unallocated': 'err',
+        'Included in Kit': 'neutral'
+      };
+      return `<span class="badge ${map[status] || 'neutral'}">${status}</span>`;
+    }
+
+    function renderReadinessSummary() {
+      const total = state.bomLines.length;
+      const ready = state.bomLines.filter(b =>
+        b.status === 'Installed' ||
+        b.status === 'Picked' ||
+        b.status === 'Included in Kit' ||
+        (b.status === 'Reserved' && b.qtyAllocated >= b.qtyRequired)
+      ).length;
+      const shortfalls = state.bomLines.filter(b => b.qtyAllocated < b.qtyRequired && b.status !== 'Included in Kit').length;
+      return { total, ready, shortfalls };
+    }
+
+    // =========================================================================
+    // 4. VARIANT A: Dense Workbench Table + Slide-Over Inspector
+    // =========================================================================
+    function renderVariantA() {
+      const parsed = parseSpecQuery(state.searchQuery);
+      const filteredComps = getFilteredComponents();
+      const summary = renderReadinessSummary();
+
+      let mainSurfaceHtml = '';
+      let inspectorHtml = '';
+
+      if (state.activeTab === 'catalog') {
+        const selectedComp = getComponentById(state.selectedComponentId) || state.components[0];
+        mainSurfaceHtml = `
+          <div class="va-filter-ribbon">
+            <label for="va-search" style="font-weight:600;">Parametric Search:</label>
+            <input id="va-search" type="search" placeholder="Try 4k7, 47n, 0.047uF, TL072..." value="${escapeHtml(state.searchQuery)}" data-action="search-input" style="min-inline-size:240px;">
+            <select aria-label="Filter by Component Category" data-action="category-select">
+              ${['All', 'Resistors', 'Capacitors', 'Semiconductors — Discrete', 'Integrated Circuits (ICs)', 'Potentiometers & Encoders'].map(cat =>
+                `<option value="${cat}" ${state.categoryFilter === cat ? 'selected' : ''}>${cat}</option>`
+              ).join('')}
+            </select>
+            ${parsed.tokens.length ? `<span class="badge info">spec_parser: ${parsed.tokens.join(' · ')}</span>` : `<span style="color:var(--text-muted); font-size:0.8rem;">Try typing shorthand like <code>4k7</code> or <code>0.047uF</code></span>`}
+          </div>
+
+          <div tabindex="0" role="region" aria-labelledby="va-catalog-caption" class="table-wrapper">
+            <table style="--label-2:'Category'; --label-3:'Verbatim & Canonical Spec'; --label-4:'Storage Locations'; --label-5:'Available / On Hand'; --label-6:'Inline Stock Stepper';">
+              <caption id="va-catalog-caption">Component Catalog (${filteredComps.length} matching components)</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Component</th>
+                  <th scope="col">Category &amp; Package</th>
+                  <th scope="col">Canonical &amp; Verbatim Spec</th>
+                  <th scope="col">Storage Locations (Stock Lots)</th>
+                  <th scope="col">Available / Total</th>
+                  <th scope="col">Quick Adjust (HTMX)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filteredComps.map(c => {
+                  const total = getTotalOnHand(c);
+                  const avail = getAvailableStock(c);
+                  const reserved = getReservedQuantity(c.id);
+                  const isLow = avail < c.lowStockThreshold;
+                  const singleLot = c.lots.length === 1 ? c.lots[0] : null;
+                  return `
+                    <tr id="comp-row-${c.id}" data-select-comp="${c.id}" style="cursor:pointer; ${selectedComp?.id === c.id ? 'outline: 2px solid var(--brand-color); outline-offset:-2px;' : ''}">
+                      <th scope="row">${escapeHtml(c.name)}</th>
+                      <td>${escapeHtml(c.category)}<br><small style="color:var(--text-muted);">${escapeHtml(c.package)}</small></td>
+                      <td>
+                        <strong class="mono">${escapeHtml(c.canonicalValue)}</strong>
+                        <div style="color:var(--text-muted); font-size:0.8rem;">raw: <code>${escapeHtml(c.rawSpecText)}</code></div>
+                      </td>
+                      <td>
+                        ${c.lots.map(l => `<div style="font-size:0.82rem;"><code>${escapeHtml(l.locationPath)}</code> <strong>(${l.quantity})</strong></div>`).join('')}
+                      </td>
+                      <td>
+                        <span class="badge ${avail === 0 ? 'err' : isLow ? 'warn' : 'ok'}">${avail} Avail</span>
+                        <span style="color:var(--text-muted); font-size:0.8rem;"> / ${total} Total ${reserved ? `(${reserved} Rsv)` : ''}</span>
+                      </td>
+                      <td>
+                        ${singleLot ? `
+                          <div class="stepper">
+                            <button type="button" data-lot-delta="-1" data-comp-id="${c.id}" data-lot-id="${singleLot.id}" aria-label="Decrement ${escapeHtml(c.name)}">−</button>
+                            <span>${singleLot.quantity}</span>
+                            <button type="button" data-lot-delta="1" data-comp-id="${c.id}" data-lot-id="${singleLot.id}" aria-label="Increment ${escapeHtml(c.name)}">+</button>
+                          </div>
+                        ` : `
+                          <button type="button" class="xs" data-select-comp="${c.id}">
+                            ${c.lots.length} Stock Lots (${total}) ▸
+                          </button>
+                        `}
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        inspectorHtml = selectedComp ? `
+          <aside class="card" aria-label="Component Stock Lot Drawer">
+            <div style="display:flex; justify-content:space-between; align-items:start; gap:0.5rem;">
+              <h3 style="margin:0; font-size:0.98rem;">${escapeHtml(selectedComp.name)}</h3>
+              <span class="badge info">${escapeHtml(selectedComp.canonicalValue)}</span>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.82rem; margin:0.4rem 0 0.75rem;">
+              Verbatim Spec: <code>${escapeHtml(selectedComp.rawSpecText)}</code><br>
+              Attributes: ${escapeHtml(selectedComp.specs)}
+            </p>
+            <h4 style="margin:0 0 0.4rem; font-size:0.82rem; text-transform:uppercase; color:var(--text-muted);">
+              Stock Lots (${selectedComp.lots.length})
+            </h4>
+            ${selectedComp.lots.map(l => `
+              <div style="border:1px solid var(--border-color); border-radius:5px; padding:0.5rem; margin-block-end:0.5rem; background:var(--bg-subtle);">
+                <div style="font-size:0.8rem; font-weight:600;">${escapeHtml(l.locationPath)}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-block-start:0.35rem;">
+                  <small style="color:var(--text-muted);">${escapeHtml(l.supplier)} #${escapeHtml(l.partNo)}</small>
+                  <div class="stepper">
+                    <button type="button" data-lot-delta="-1" data-comp-id="${selectedComp.id}" data-lot-id="${l.id}">−</button>
+                    <span>${l.quantity}</span>
+                    <button type="button" data-lot-delta="1" data-comp-id="${selectedComp.id}" data-lot-id="${l.id}">+</button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+            ${selectedComp.lots.length > 1 ? `
+              <button type="button" class="xs" data-merge-lots="${selectedComp.id}" style="inline-size:100%; justify-content:center;">
+                Merge Duplicate Stock Lots into ${escapeHtml(selectedComp.lots[0].locationPath)}
+              </button>
+            ` : ''}
+          </aside>
+        ` : '';
+      } else if (state.activeTab === 'bom') {
+        const selectedBom = state.bomLines.find(b => b.id === state.selectedBomLineId) || state.bomLines[0];
+        const linkedComp = selectedBom ? getComponentById(selectedBom.componentId) : null;
+
+        mainSurfaceHtml = `
+          <div tabindex="0" role="region" aria-labelledby="va-bom-caption" class="table-wrapper">
+            <table style="--label-2:'Spec & Linked Component'; --label-3:'Qty & Stock'; --label-4:'Source Stock Lot'; --label-5:'Fulfillment Status'; --label-6:'Row Actions';">
+              <caption id="va-bom-caption">
+                ${escapeHtml(state.kitBuild.name)} — BOM Readiness (${summary.ready}/${summary.total} Lines Ready · ${summary.shortfalls} Shortfalls)
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Ref Designators</th>
+                  <th scope="col">Schematic Spec &amp; Linked Component</th>
+                  <th scope="col">Alloc / Req</th>
+                  <th scope="col">Source Stock Lot</th>
+                  <th scope="col">Fulfillment Status</th>
+                  <th scope="col">HTMX Row Transitions</th>
+                </tr>
+              </thead>
+              <tbody id="bom-table-body">
+                ${state.bomLines.map(b => {
+                  const comp = getComponentById(b.componentId);
+                  const avail = getAvailableStock(comp);
+                  const lot = comp?.lots.find(l => l.id === b.sourceLotId) || comp?.lots[0];
+                  const hasShortfall = b.status !== 'Included in Kit' && b.qtyAllocated < b.qtyRequired;
+                  return `
+                    <tr id="bom-row-${b.id}" data-select-bom="${b.id}" style="cursor:pointer; ${selectedBom?.id === b.id ? 'outline: 2px solid var(--brand-color); outline-offset:-2px;' : ''}">
+                      <th scope="row" class="mono">${escapeHtml(b.designators)}</th>
+                      <td>
+                        <div><strong>${escapeHtml(b.rawSpecText)}</strong> <small style="color:var(--text-muted);">(${escapeHtml(b.category)})</small></div>
+                        ${comp ? `<div style="font-size:0.8rem; color:var(--text-muted);">↳ Linked: ${escapeHtml(comp.name)}</div>` : `<div style="font-size:0.8rem; color:var(--text-muted);">↳ Kit-supplied hardware</div>`}
+                        ${b.substitutionNote ? `<div style="font-size:0.78rem; color:var(--warn-text); margin-block-start:2px;">⚡ ${escapeHtml(b.substitutionNote)}</div>` : ''}
+                      </td>
+                      <td>
+                        <strong class="mono">${b.qtyAllocated} / ${b.qtyRequired}</strong>
+                        ${hasShortfall ? `<span class="badge err" style="margin-inline-start:4px;">Shortfall: ${b.qtyRequired - b.qtyAllocated}</span>` : ''}
+                        ${comp ? `<div style="font-size:0.76rem; color:var(--text-muted);">Catalog Avail: ${avail}</div>` : ''}
+                      </td>
+                      <td>
+                        ${lot ? `<code style="font-size:0.78rem;">${escapeHtml(lot.locationPath)} (${lot.quantity})</code>` : `<span style="color:var(--text-muted);">—</span>`}
+                      </td>
+                      <td>${renderStatusBadge(b.status)}</td>
+                      <td>
+                        <div style="display:flex; gap:0.25rem; flex-wrap:wrap;">
+                          ${['Unallocated', 'Reserved', 'Picked', 'Installed'].map(st => `
+                            <button type="button" class="xs ${b.status === st ? 'primary' : ''}" data-bom-status="${st}" data-bom-id="${b.id}">
+                              ${st}
+                            </button>
+                          `).join('')}
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        inspectorHtml = selectedBom ? `
+          <aside class="card" aria-label="BOM Line Inspector Drawer">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong class="mono">${escapeHtml(selectedBom.designators)}</strong>
+              ${renderStatusBadge(selectedBom.status)}
+            </div>
+            <p style="margin:0.4rem 0; font-size:0.85rem;">
+              Schematic Spec: <code>${escapeHtml(selectedBom.rawSpecText)}</code><br>
+              Allocated: <strong>${selectedBom.qtyAllocated} of ${selectedBom.qtyRequired}</strong>
+            </p>
+            ${linkedComp ? `
+              <div style="border-block-start:1px solid var(--border-color); padding-block-start:0.5rem; margin-block-start:0.5rem; font-size:0.82rem;">
+                <strong>Linked Catalog Component:</strong><br>
+                ${escapeHtml(linkedComp.name)} (${getAvailableStock(linkedComp)} Available)
+              </div>
+            ` : ''}
+            <div style="display:flex; flex-direction:column; gap:0.4rem; margin-block-start:0.75rem;">
+              ${selectedBom.qtyRequired > 1 ? `
+                <button type="button" class="xs" data-split-bom="${selectedBom.id}">
+                  ✂ 1-Click Split BOM Line (${selectedBom.qtyRequired}x → ${Math.ceil(selectedBom.qtyRequired/2)}x + ${Math.floor(selectedBom.qtyRequired/2)}x)
+                </button>
+              ` : ''}
+              <button type="button" class="xs" data-open-sub-dialog="${selectedBom.id}">
+                ⇄ Substitute Catalog Component (Preserve Spec)
+              </button>
+            </div>
+          </aside>
+        ` : '';
+      } else {
+        // Bench Checklist Tab in Variant A
+        mainSurfaceHtml = renderBenchChecklistTable();
+        inspectorHtml = renderBenchLogPanel();
+      }
+
+      return `
+        <div class="va-subnav">
+          <div class="va-tabs" role="tablist" aria-label="Workbench Surfaces">
+            <button type="button" role="tab" aria-selected="${state.activeTab === 'catalog'}" data-tab="catalog">
+              1. Component Catalog &amp; Parametric Search
+            </button>
+            <button type="button" role="tab" aria-selected="${state.activeTab === 'bom'}" data-tab="bom">
+              2. Kit Build BOM &amp; Stock Allocation (${summary.ready}/${summary.total} Ready)
+            </button>
+            <button type="button" role="tab" aria-selected="${state.activeTab === 'bench'}" data-tab="bench">
+              3. Active Bench Checklist &amp; Voltage Log
+            </button>
+          </div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">
+            Kit Storage Location: <code>${escapeHtml(state.kitBuild.locationPath)}</code>
+          </div>
+        </div>
+
+        <div class="va-grid-with-drawer">
+          <div>${mainSurfaceHtml}</div>
+          <div>${inspectorHtml}</div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // 5. VARIANT B: Three-Pane Master-Detail IDE Workbench
+    // =========================================================================
+    function renderVariantB() {
+      const parsed = parseSpecQuery(state.searchQuery);
+      const filteredComps = getFilteredComponents();
+      const selectedComp = getComponentById(state.selectedComponentId) || state.components[0];
+      const selectedBom = state.bomLines.find(b => b.id === state.selectedBomLineId) || state.bomLines[0];
+
+      return `
+        <div class="vb-shell">
+          <!-- Left Pane: Hierarchical Storage Locations & Kit Builds Tree -->
+          <section class="vb-pane" aria-label="Navigation Tree">
+            <div class="vb-pane-header">
+              <span>Explorer: Locations &amp; Builds</span>
+            </div>
+            <div class="vb-pane-body">
+              <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-block-end:0.3rem;">
+                Active Kit Builds
+              </div>
+              <button type="button" class="tree-item" aria-current="${state.activeTab === 'bom'}" data-tab="bom">
+                <span>🎛 Klon Centaur (BOM)</span>
+                <span class="badge warn">2 Short</span>
+              </button>
+              <button type="button" class="tree-item" aria-current="${state.activeTab === 'bench'}" data-tab="bench">
+                <span>🔧 Klon — Bench Mode</span>
+                <span class="badge info">Active</span>
+              </button>
+
+              <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin:0.85rem 0 0.3rem;">
+                Storage Locations (Recursive CTE)
+              </div>
+              ${['All', 'Binder A', 'Crate A', 'Crate B', 'Crate C', 'Drawer Cabinet'].map(loc => `
+                <button type="button" class="tree-item" aria-current="${state.activeTab === 'catalog' && state.locationFilter === loc}" data-loc-filter="${loc}">
+                  <span>📦 ${loc === 'All' ? 'All Storage Locations' : loc}</span>
+                </button>
+              `).join('')}
+            </div>
+          </section>
+
+          <!-- Center Pane: Active List / Table -->
+          <section class="vb-pane" aria-label="Center Workspace">
+            <div class="vb-pane-header">
+              <span>${state.activeTab === 'catalog' ? `Components (${ state.locationFilter })` : state.activeTab === 'bom' ? state.kitBuild.name : `Bench Assembly: ${state.kitBuild.name}`}</span>
+              <input type="search" placeholder="Search 4k7, 47n, TL072..." value="${escapeHtml(state.searchQuery)}" data-action="search-input" style="inline-size:210px; font-size:0.8rem;">
+            </div>
+            <div class="vb-pane-body">
+              ${state.activeTab === 'catalog' ? `
+                ${parsed.tokens.length ? `<div style="margin-block-end:0.5rem;"><span class="badge info">Parsed: ${parsed.tokens.join(' · ')}</span></div>` : ''}
+                ${filteredComps.map(c => {
+                  const avail = getAvailableStock(c);
+                  const total = getTotalOnHand(c);
+                  return `
+                    <div data-select-comp="${c.id}" style="padding:0.55rem; border:1px solid var(--border-color); border-radius:5px; margin-block-end:0.45rem; cursor:pointer; background:${selectedComp?.id === c.id ? 'var(--bg-subtle)' : 'var(--bg-surface)'};">
+                      <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong>${escapeHtml(c.name)}</strong>
+                        <span class="badge ${avail > 0 ? 'ok' : 'err'}">${avail} Avail / ${total} Total</span>
+                      </div>
+                      <div style="font-size:0.8rem; color:var(--text-muted); margin-block-start:0.2rem;">
+                        <code>${escapeHtml(c.canonicalValue)}</code> · verbatim: <code>${escapeHtml(c.rawSpecText)}</code> · ${c.lots.length} lot(s)
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              ` : state.activeTab === 'bom' ? `
+                ${state.bomLines.map(b => {
+                  const comp = getComponentById(b.componentId);
+                  return `
+                    <div data-select-bom="${b.id}" style="padding:0.55rem; border:1px solid var(--border-color); border-radius:5px; margin-block-end:0.45rem; cursor:pointer; background:${selectedBom?.id === b.id ? 'var(--bg-subtle)' : 'var(--bg-surface)'};">
+                      <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span><strong class="mono">${escapeHtml(b.designators)}</strong> — ${escapeHtml(b.rawSpecText)}</span>
+                        ${renderStatusBadge(b.status)}
+                      </div>
+                      <div style="font-size:0.8rem; color:var(--text-muted); margin-block-start:0.2rem; display:flex; justify-content:space-between;">
+                        <span>${comp ? escapeHtml(comp.name) : 'Included in Kit'}</span>
+                        <strong class="mono">${b.qtyAllocated}/${b.qtyRequired}</strong>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              ` : renderBenchChecklistTable()}
+            </div>
+          </section>
+
+          <!-- Right Pane: Persistent Context Inspector -->
+          <section class="vb-pane" id="inspector" aria-label="Inspector Pane">
+            <div class="vb-pane-header">
+              <span>Inspector (hx-target="#inspector")</span>
+            </div>
+            <div class="vb-pane-body">
+              ${state.activeTab === 'catalog' && selectedComp ? `
+                <h3 style="margin-block-start:0; font-size:0.95rem;">${escapeHtml(selectedComp.name)}</h3>
+                <p style="font-size:0.82rem; color:var(--text-muted);">
+                  Canonical: <code>${escapeHtml(selectedComp.canonicalValue)}</code><br>
+                  Verbatim: <code>${escapeHtml(selectedComp.rawSpecText)}</code><br>
+                  Specs: ${escapeHtml(selectedComp.specs)}
+                </p>
+                <h4 style="font-size:0.8rem; text-transform:uppercase; color:var(--text-muted);">Stock Lots by Location</h4>
+                ${selectedComp.lots.map(l => `
+                  <div style="padding:0.5rem; border:1px solid var(--border-color); border-radius:5px; margin-block-end:0.4rem;">
+                    <div style="font-size:0.8rem; font-weight:600;">${escapeHtml(l.locationPath)}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-block-start:0.3rem;">
+                      <small style="color:var(--text-muted);">${escapeHtml(l.supplier)} #${escapeHtml(l.partNo)}</small>
+                      <div class="stepper">
+                        <button type="button" data-lot-delta="-1" data-comp-id="${selectedComp.id}" data-lot-id="${l.id}">−</button>
+                        <span>${l.quantity}</span>
+                        <button type="button" data-lot-delta="1" data-comp-id="${selectedComp.id}" data-lot-id="${l.id}">+</button>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              ` : state.activeTab === 'bom' && selectedBom ? `
+                <h3 style="margin-block-start:0; font-size:0.95rem;" class="mono">${escapeHtml(selectedBom.designators)}: ${escapeHtml(selectedBom.rawSpecText)}</h3>
+                <p style="font-size:0.82rem; color:var(--text-muted);">
+                  Status: ${renderStatusBadge(selectedBom.status)} · Allocated: ${selectedBom.qtyAllocated}/${selectedBom.qtyRequired}
+                </p>
+                <div style="display:flex; gap:0.3rem; flex-wrap:wrap; margin-block-end:0.75rem;">
+                  ${['Unallocated', 'Reserved', 'Picked', 'Installed'].map(st => `
+                    <button type="button" class="xs ${selectedBom.status === st ? 'primary' : ''}" data-bom-status="${st}" data-bom-id="${selectedBom.id}">${st}</button>
+                  `).join('')}
+                </div>
+                ${selectedBom.qtyRequired > 1 ? `
+                  <button type="button" class="xs" data-split-bom="${selectedBom.id}" style="inline-size:100%; margin-block-end:0.4rem;">
+                    ✂ Split BOM Line (${selectedBom.qtyRequired}x)
+                  </button>
+                ` : ''}
+                <button type="button" class="xs" data-open-sub-dialog="${selectedBom.id}" style="inline-size:100%;">
+                  ⇄ Substitute Component
+                </button>
+              ` : renderBenchLogPanel()}
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // 6. VARIANT C: Split-Screen Kitting Console + High-Contrast Bench HUD
+    // =========================================================================
+    function renderVariantC() {
+      const parsed = parseSpecQuery(state.searchQuery);
+      const filteredComps = getFilteredComponents();
+      const isBenchHud = state.activeTab === 'bench';
+
+      return `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-block-end:0.85rem; flex-wrap:wrap; gap:0.5rem;">
+          <div>
+            <strong style="font-size:1.05rem;">${escapeHtml(state.kitBuild.name)}</strong>
+            <span class="badge info" style="margin-inline-start:0.4rem;">${escapeHtml(state.kitBuild.status)}</span>
+          </div>
+          <div style="display:flex; gap:0.4rem;">
+            <button type="button" class="${!isBenchHud ? 'primary' : ''}" data-tab="bom">
+              📦 Split Kitting Console (BOM + Live Catalog)
+            </button>
+            <button type="button" class="${isBenchHud ? 'primary' : ''}" data-tab="bench">
+              🔥 Soldering Bench HUD (Checklist + Voltages)
+            </button>
+          </div>
+        </div>
+
+        ${!isBenchHud ? `
+          <div class="vc-split">
+            <!-- Left 60%: Kit Build BOM Readiness & Kitting Table -->
+            <div tabindex="0" role="region" aria-labelledby="vc-bom-caption" class="table-wrapper">
+              <table style="--label-2:'Spec'; --label-3:'Status'; --label-4:'Quick Kitting';">
+                <caption id="vc-bom-caption">Left Pane: Kit Build BOM &amp; 1-Click Kitting into ${escapeHtml(state.kitBuild.locationPath)}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Designators</th>
+                    <th scope="col">Spec &amp; Substitution</th>
+                    <th scope="col">Status &amp; Qty</th>
+                    <th scope="col">Kitting Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${state.bomLines.map(b => {
+                    const comp = getComponentById(b.componentId);
+                    return `
+                      <tr id="bom-row-${b.id}">
+                        <th scope="row" class="mono">${escapeHtml(b.designators)}</th>
+                        <td>
+                          <strong>${escapeHtml(b.rawSpecText)}</strong>
+                          <div style="font-size:0.78rem; color:var(--text-muted);">${comp ? escapeHtml(comp.name) : 'Included in Kit'}</div>
+                          ${b.substitutionNote ? `<div style="font-size:0.76rem; color:var(--warn-text);">⚡ ${escapeHtml(b.substitutionNote)}</div>` : ''}
+                        </td>
+                        <td>
+                          ${renderStatusBadge(b.status)}
+                          <span class="mono" style="margin-inline-start:4px;">${b.qtyAllocated}/${b.qtyRequired}</span>
+                        </td>
+                        <td>
+                          <div style="display:flex; gap:0.25rem; flex-wrap:wrap;">
+                            <button type="button" class="xs ${b.status === 'Reserved' ? 'primary' : ''}" data-bom-status="Reserved" data-bom-id="${b.id}">Reserve</button>
+                            <button type="button" class="xs ${b.status === 'Picked' ? 'primary' : ''}" data-bom-status="Picked" data-bom-id="${b.id}">Pick to Box</button>
+                            ${b.qtyRequired > 1 ? `<button type="button" class="xs" data-split-bom="${b.id}" title="Split Line">✂ Split</button>` : ''}
+                            <button type="button" class="xs" data-find-candidates="${escapeHtml(b.rawSpecText)}" title="Search Catalog on Right">🔍</button>
+                          </div>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Right 40%: Live Parametric Catalog & Stock Drawer -->
+            <div class="card">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; margin-block-end:0.6rem;">
+                <strong>Right Pane: Live Catalog &amp; Stock Lots</strong>
+                <input type="search" placeholder="Filter 4k7, 47n, BAT41..." value="${escapeHtml(state.searchQuery)}" data-action="search-input" style="inline-size:190px;">
+              </div>
+              ${parsed.tokens.length ? `<div style="margin-block-end:0.5rem;"><span class="badge info">spec_parser: ${parsed.tokens.join(' · ')}</span></div>` : ''}
+              ${filteredComps.map(c => {
+                const avail = getAvailableStock(c);
+                return `
+                  <div style="border:1px solid var(--border-color); border-radius:5px; padding:0.5rem; margin-block-end:0.45rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <strong>${escapeHtml(c.name)}</strong>
+                      <span class="badge ${avail > 0 ? 'ok' : 'err'}">${avail} Avail</span>
+                    </div>
+                    <div style="font-size:0.78rem; color:var(--text-muted); margin:0.2rem 0;">
+                      <code>${escapeHtml(c.canonicalValue)}</code> · verbatim: <code>${escapeHtml(c.rawSpecText)}</code>
+                    </div>
+                    ${c.lots.map(l => `
+                      <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.78rem; padding-block-start:0.2rem;">
+                        <code>${escapeHtml(l.locationPath)}</code>
+                        <div class="stepper">
+                          <button type="button" data-lot-delta="-1" data-comp-id="${c.id}" data-lot-id="${l.id}">−</button>
+                          <span>${l.quantity}</span>
+                          <button type="button" data-lot-delta="1" data-comp-id="${c.id}" data-lot-id="${l.id}">+</button>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        ` : `
+          <div class="vc-bench-hud">
+            <div>${renderBenchChecklistTable()}</div>
+            <div>${renderBenchLogPanel()}</div>
+          </div>
+        `}
+      `;
+    }
+
+    // =========================================================================
+    // 7. SHARED BENCH CHECKLIST & BENCH LOG SURFACES
+    // =========================================================================
+    function renderBenchChecklistTable() {
+      const totalDes = state.bomLines.reduce((acc, b) => acc + b.designatorList.length, 0);
+      const checkedDes = state.bomLines.reduce((acc, b) => acc + b.checkedDesignators.length, 0);
+
+      return `
+        <div class="card" style="margin-block-end:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+          <div>
+            <strong>Bench Populate Progress: ${checkedDes} / ${totalDes} Placements Soldered</strong>
+            <div style="font-size:0.8rem; color:var(--text-muted);">Click individual Reference Designators as you solder them onto the PCB, or mark the entire BOM Line Installed.</div>
+          </div>
+          <progress max="${totalDes}" value="${checkedDes}" style="inline-size:180px;"></progress>
+        </div>
+
+        <div tabindex="0" role="region" aria-labelledby="bench-table-caption" class="table-wrapper">
+          <table style="--label-2:'Value & Component'; --label-3:'Placement Designators'; --label-4:'Line Status';">
+            <caption id="bench-table-caption">Active Bench Checklist (Grouped by Assembly Height / Stage)</caption>
+            <thead>
+              <tr>
+                <th scope="col">Assembly Stage</th>
+                <th scope="col">Schematic Spec &amp; Part</th>
+                <th scope="col">Interactive Reference Designators</th>
+                <th scope="col">Fulfillment Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${state.bomLines.map(b => {
+                const comp = getComponentById(b.componentId);
+                return `
+                  <tr id="bench-row-${b.id}">
+                    <th scope="row" style="font-size:0.78rem; color:var(--text-muted);">${escapeHtml(b.stageGroup)}</th>
+                    <td>
+                      <strong>${escapeHtml(b.rawSpecText)}</strong>
+                      <div style="font-size:0.78rem; color:var(--text-muted);">${comp ? escapeHtml(comp.name) : 'Kit Hardware'}</div>
+                    </td>
+                    <td>
+                      ${b.designatorList.map(des => {
+                        const isDone = b.checkedDesignators.includes(des);
+                        return `
+                          <button type="button" class="designator-chip ${isDone ? 'done' : ''}" data-toggle-des="${escapeHtml(des)}" data-bom-id="${b.id}">
+                            ${isDone ? '✓' : '○'} ${escapeHtml(des)}
+                          </button>
+                        `;
+                      }).join('')}
+                    </td>
+                    <td>
+                      ${renderStatusBadge(b.status)}
+                      ${b.status !== 'Installed' ? `
+                        <button type="button" class="xs primary" data-bom-status="Installed" data-bom-id="${b.id}" style="margin-inline-start:0.35rem;">
+                          Mark All Installed
+                        </button>
+                      ` : ''}
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderBenchLogPanel() {
+      return `
+        <aside class="card" aria-label="Bench Log & Reference Docs">
+          <h3 style="margin-block-start:0; font-size:0.95rem;">Bench Log &amp; Attachments</h3>
+          <div style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-block-end:0.65rem;">
+            ${state.kitBuild.attachments.map(a => `
+              <span class="badge neutral">📄 ${escapeHtml(a.name)}</span>
+            `).join('')}
+          </div>
+
+          <form id="bench-log-form" style="display:flex; flex-direction:column; gap:0.4rem; margin-block-end:0.75rem;">
+            <select id="bench-log-type" aria-label="Bench Log Entry Type">
+              <option value="Measurement / Voltage Reading">⚡ Measurement / Voltage Reading</option>
+              <option value="Troubleshooting">🔍 Troubleshooting</option>
+              <option value="Modification">🔧 Modification</option>
+              <option value="Note">📝 Note</option>
+            </select>
+            <div style="display:flex; gap:0.35rem;">
+              <input id="bench-log-input" type="text" placeholder="e.g. IC1 Pin 7 = 4.51V..." style="flex:1;" aria-label="Bench Log Entry Text">
+              <button type="submit" class="primary xs">Add Entry</button>
+            </div>
+          </form>
+
+          <div id="bench-log-list">
+            ${state.benchLogs.map(entry => `
+              <div style="border-block-start:1px solid var(--border-color); padding:0.45rem 0; font-size:0.82rem;">
+                <div style="display:flex; justify-content:space-between; color:var(--text-muted); font-size:0.75rem;">
+                  <strong>${escapeHtml(entry.type)}</strong>
+                  <span class="mono">${escapeHtml(entry.timestamp)}</span>
+                </div>
+                <div style="margin-block-start:0.15rem;">${escapeHtml(entry.body)}</div>
+              </div>
+            `).join('')}
+          </div>
+        </aside>
+      `;
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // =========================================================================
+    // 8. VARIANT ROUTER & FLOATING SWITCHER BAR
+    // =========================================================================
+    function getCurrentVariantKey() {
+      const params = new URLSearchParams(window.location.search);
+      const v = (params.get('variant') || 'A').toUpperCase();
+      return VARIANTS.some(item => item.key === v) ? v : 'A';
+    }
+
+    function setVariantKey(nextKey) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('variant', nextKey);
+      window.history.replaceState({}, '', url);
+      render();
+    }
+
+    function cycleVariant(dir) {
+      const cur = getCurrentVariantKey();
+      const idx = VARIANTS.findIndex(v => v.key === cur);
+      const nextIdx = (idx + dir + VARIANTS.length) % VARIANTS.length;
+      setVariantKey(VARIANTS[nextIdx].key);
+    }
+
+    function openSubstitutionDialog(bomId) {
+      const line = state.bomLines.find(b => b.id === bomId);
+      const dialog = document.getElementById('bom-action-dialog');
+      const content = document.getElementById('bom-dialog-content');
+      if (!line || !dialog || !content) return;
+
+      content.innerHTML = `
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-block-start:0;">
+          Original Schematic Spec (<strong class="mono">${escapeHtml(line.designators)}: ${escapeHtml(line.rawSpecText)}</strong>) is preserved verbatim when linking a substitute catalog Component.
+        </p>
+        <form method="dialog" id="sub-dialog-form" data-bom-id="${escapeHtml(line.id)}" style="display:flex; flex-direction:column; gap:0.6rem;">
+          <label style="font-size:0.82rem; font-weight:600;">
+            Select Substitute Catalog Component:
+            <select id="sub-comp-select" style="inline-size:100%; margin-block-start:0.25rem;" autofocus>
+              ${state.components.map(c => `
+                <option value="${c.id}" ${c.id === line.componentId ? 'selected' : ''}>
+                  ${escapeHtml(c.name)} (${getAvailableStock(c)} Available)
+                </option>
+              `).join('')}
+            </select>
+          </label>
+          <label style="font-size:0.82rem; font-weight:600;">
+            Substitution Note:
+            <input type="text" id="sub-note-input" value="${escapeHtml(line.substitutionNote || 'Substituted BAT41 Schottky diode in place of 1N34A')}" style="inline-size:100%; margin-block-start:0.25rem;">
+          </label>
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-block-start:0.5rem;">
+            <button value="cancel" type="submit">Cancel</button>
+            <button value="apply" type="submit" class="primary">Apply Substitution</button>
+          </div>
+        </form>
+      `;
+
+      dialog.showModal();
+    }
+
+    function render() {
+      const vKey = getCurrentVariantKey();
+      const vMeta = VARIANTS.find(v => v.key === vKey) || VARIANTS[0];
+
+      document.getElementById('switcher-label').textContent = `${vMeta.key} (${vMeta.name})`;
+      document.getElementById('variant-subtitle').textContent = `Variant ${vMeta.key}: ${vMeta.summary}`;
+
+      const root = document.getElementById('app-root');
+      if (vKey === 'A') root.innerHTML = renderVariantA();
+      else if (vKey === 'B') root.innerHTML = renderVariantB();
+      else root.innerHTML = renderVariantC();
+    }
+
+    // Event delegation for interactive prototype actions
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('button, [data-select-comp], [data-select-bom]');
+      if (!btn) return;
+
+      if (btn.id === 'prev-variant-btn') { cycleVariant(-1); return; }
+      if (btn.id === 'next-variant-btn') { cycleVariant(1); return; }
+      if (btn.id === 'reset-state-btn') { state = createInitialState(); render(); return; }
+
+      if (btn.dataset.tab) {
+        state.activeTab = btn.dataset.tab;
+        logHtmx('GET', `/views/${state.activeTab}`, '#app-root');
+        render();
+        return;
+      }
+
+      if (btn.dataset.locFilter) {
+        state.activeTab = 'catalog';
+        state.locationFilter = btn.dataset.locFilter;
+        logHtmx('GET', `/catalog?location=${encodeURIComponent(state.locationFilter)}`, '#center-pane');
+        render();
+        return;
+      }
+
+      if (btn.dataset.lotDelta) {
+        e.stopPropagation();
+        adjustLotQty(btn.dataset.compId, btn.dataset.lotId, parseInt(btn.dataset.lotDelta, 10));
+        return;
+      }
+
+      if (btn.dataset.mergeLots) {
+        e.stopPropagation();
+        mergeDuplicateLots(btn.dataset.mergeLots);
+        return;
+      }
+
+      if (btn.dataset.bomStatus) {
+        e.stopPropagation();
+        transitionBomStatus(btn.dataset.bomId, btn.dataset.bomStatus);
+        return;
+      }
+
+      if (btn.dataset.splitBom) {
+        e.stopPropagation();
+        splitBomLine(btn.dataset.splitBom);
+        return;
+      }
+
+      if (btn.dataset.openSubDialog) {
+        e.stopPropagation();
+        openSubstitutionDialog(btn.dataset.openSubDialog);
+        return;
+      }
+
+      if (btn.dataset.findCandidates) {
+        e.stopPropagation();
+        state.searchQuery = btn.dataset.findCandidates.split(' ')[0];
+        logHtmx('GET', `/catalog/search?q=${encodeURIComponent(state.searchQuery)}`, '#catalog-drawer');
+        render();
+        return;
+      }
+
+      if (btn.dataset.toggleDes) {
+        e.stopPropagation();
+        toggleDesignatorInstalled(btn.dataset.bomId, btn.dataset.toggleDes);
+        return;
+      }
+
+      if (btn.dataset.selectComp) {
+        state.selectedComponentId = btn.dataset.selectComp;
+        logHtmx('GET', `/catalog/components/${state.selectedComponentId}/inspector`, '#inspector');
+        render();
+        return;
+      }
+
+      if (btn.dataset.selectBom) {
+        state.selectedBomLineId = btn.dataset.selectBom;
+        logHtmx('GET', `/builds/${state.kitBuild.id}/bom/${state.selectedBomLineId}/inspector`, '#inspector');
+        render();
+      }
+    });
+
+    document.addEventListener('input', (e) => {
+      if (e.target.dataset.action === 'search-input') {
+        state.searchQuery = e.target.value;
+        const pos = e.target.selectionStart;
+        logHtmx('GET', `/catalog/search?q=${encodeURIComponent(state.searchQuery)}`, '#catalog-results');
+        render();
+        const input = document.querySelector('[data-action="search-input"]');
+        if (input) {
+          input.focus();
+          input.setSelectionRange(pos, pos);
+        }
+      }
+    });
+
+    document.addEventListener('change', (e) => {
+      if (e.target.dataset.action === 'category-select') {
+        state.categoryFilter = e.target.value;
+        logHtmx('GET', `/catalog/search?category=${encodeURIComponent(state.categoryFilter)}`, '#catalog-results');
+        render();
+      }
+    });
+
+    document.addEventListener('submit', (e) => {
+      if (e.target.id === 'bench-log-form') {
+        e.preventDefault();
+        const typeEl = document.getElementById('bench-log-type');
+        const bodyEl = document.getElementById('bench-log-input');
+        if (typeEl && bodyEl) {
+          addBenchLog(typeEl.value, bodyEl.value);
+        }
+      }
+    });
+
+    // Dialog close listener with returnValue reset (per modern-web-guidance `dialog`)
+    const bomDialog = document.getElementById('bom-action-dialog');
+    bomDialog.addEventListener('close', () => {
+      if (bomDialog.returnValue === 'apply') {
+        const form = document.getElementById('sub-dialog-form');
+        const compSel = document.getElementById('sub-comp-select');
+        const noteIn = document.getElementById('sub-note-input');
+        if (form && compSel && noteIn) {
+          substituteBomComponent(form.dataset.bomId, compSel.value, noteIn.value);
+        }
+      }
+      bomDialog.returnValue = '';
+    });
+
+    // Fallback for <dialog closedby="any"> in browsers without native closedBy
+    if (!('closedBy' in HTMLDialogElement.prototype)) {
+      const outside = (e, dialog) => {
+        const r = dialog.getBoundingClientRect();
+        return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+      };
+      for (const dialog of document.querySelectorAll('dialog[closedby="any"]')) {
+        let pressedOutside = false;
+        dialog.addEventListener('pointerdown', (e) => { pressedOutside = outside(e, dialog); });
+        dialog.addEventListener('pointerup', (e) => { if (pressedOutside && outside(e, dialog)) dialog.close(); });
+      }
+    }
+
+    // Keyboard <- and -> variant switching (ignoring focused form inputs)
+    document.addEventListener('keydown', (e) => {
+      const tag = (e.target?.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.target?.isContentEditable) return;
+      if (bomDialog.open) return;
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        cycleVariant(-1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        cycleVariant(1);
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
