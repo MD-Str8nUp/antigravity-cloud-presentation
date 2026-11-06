@@ -238,7 +238,7 @@ layout: default
 </div>
 
 <div class="p-3 rounded-xl bg-gray-900/90 border border-cyan-500/30 text-xs font-mono text-cyan-200 mb-4">
-  <span class="text-gray-400">Initial Prompt:</span> "I'd like to build a web application to track my audio electronics components inventory and DIY kit builds."
+  I'd like to build a web application to track my audio electronics components inventory and DIY kit builds.
 </div>
 
 <ol class="space-y-3.5 text-sm text-gray-200 list-decimal pl-6 leading-relaxed">
