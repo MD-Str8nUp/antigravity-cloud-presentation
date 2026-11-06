@@ -99,7 +99,7 @@ const displayUrl = computed(() => props.url.replace(/^https?:\/\//, '').replace(
       :href="url"
       target="_blank"
       rel="noopener noreferrer"
-      class="text-sm font-mono font-semibold hover:underline break-all"
+      class="text-xs font-mono font-semibold tracking-tight hover:underline whitespace-nowrap"
       :class="accent === 'emerald' ? 'text-emerald-300' : 'text-cyan-300'"
     >
       {{ displayUrl }}
