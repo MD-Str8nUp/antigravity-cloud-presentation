@@ -19,6 +19,8 @@ import AsciinemaPlayer from '../components/AsciinemaPlayer.vue'
         :markers="$frontmatter.markers ?? []"
         :pauseOnMarkers="$frontmatter.pauseOnMarkers ?? true"
         :showChapterBar="$frontmatter.showChapterBar ?? false"
+        :startChapter="$frontmatter.startChapter"
+        :endChapter="$frontmatter.endChapter"
         class="w-full h-full"
       />
       <div v-else class="w-full h-full flex flex-col justify-center">

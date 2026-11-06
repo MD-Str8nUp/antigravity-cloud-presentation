@@ -1,0 +1,20 @@
+{
+  "name": "antigravity-cloud-presentation-slides",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "sync-casts": "mkdir -p public/casts && cp ../recordings/final/*.cast public/casts/ 2>/dev/null || true",
+    "sync-codelab": "mkdir -p public/codelab/lessons public/codelab/reference public/codelab/assets && cp ../codelab/index.html public/codelab/ && cp ../codelab/lessons/*.html public/codelab/lessons/ && cp ../codelab/reference/*.html public/codelab/reference/ && cp ../codelab/assets/* public/codelab/assets/",
+    "predev": "npm run sync-casts && npm run sync-codelab",
+    "dev": "slidev",
+    "prebuild": "npm run sync-casts && npm run sync-codelab",
+    "build": "slidev build --base /antigravity-cloud-presentation/",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^53.0.0",
+    "@slidev/theme-default": "^0.25.0",
+    "asciinema-player": "^3.8.0",
+    "vue": "^3.5.0"
+  }
+}

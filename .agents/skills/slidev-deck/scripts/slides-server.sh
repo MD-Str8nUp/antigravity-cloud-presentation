@@ -40,7 +40,7 @@ check_server_listening() {
 get_http_code() {
   local port="$1"
   local code
-  code="$(curl --noproxy "*" -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${port}/" 2>/dev/null || true)"
+  code="$(curl --noproxy "*" -s -o /dev/null -w "%{http_code}" "http://localhost:${port}/" 2>/dev/null || true)"
   if [[ "$code" =~ ^[1-5][0-9]{2}$ ]]; then
     echo "$code"
   else
@@ -86,7 +86,7 @@ cmd_start() {
   echo "Starting Slidev server in background on port $PORT..."
   (
     cd "$SLIDES_DIR"
-    nohup npm run dev -- --port "$PORT" > "$LOG_FILE" 2>&1 &
+    tail -f /dev/null | nohup npm run dev -- --port "$PORT" > "$LOG_FILE" 2>&1 &
     echo $! > "$PID_FILE"
   )
 

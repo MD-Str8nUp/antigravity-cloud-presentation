@@ -1,0 +1,10 @@
+# Node / Slidev build artifacts
+slides/node_modules/
+slides/dist/
+slides/.slidev.pid
+slides/.slidev.log
+slides/public/casts/*.cast
+slides/public/codelab/
+
+# OS metadata
+.DS_Store

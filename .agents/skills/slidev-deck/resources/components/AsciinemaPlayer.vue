@@ -113,6 +113,14 @@ export interface AsciinemaPlayerProps {
    * Show the development chapter stepper pills, transport bar, and segment HUD (default: false)
    */
   showChapterBar?: boolean
+  /**
+   * Optional 1-based starting chapter number (e.g. 12 starts at the segment leading into Chapter 12)
+   */
+  startChapter?: number
+  /**
+   * Optional 1-based ending chapter number (e.g. 17 stops after Chapter 17)
+   */
+  endChapter?: number
 }
 
 const props = withDefaults(defineProps<AsciinemaPlayerProps>(), {
@@ -136,9 +144,12 @@ const props = withDefaults(defineProps<AsciinemaPlayerProps>(), {
   markers: () => [],
   pauseOnMarkers: true,
   showChapterBar: false,
+  startChapter: undefined,
+  endChapter: undefined,
 })
 
 const containerRef = ref<HTMLDivElement | null>(null)
+const chapterPillsRef = ref<HTMLDivElement | null>(null)
 const chapters = ref<CastChapterInfo[]>([])
 const segments = ref<CastSegmentInfo[]>([])
 const activeChapterIdx = ref<number>(-1)
@@ -202,7 +213,9 @@ function prepareCastForPlayer(
   castText: string,
   idleTimeLimitOverride: number,
   minSpeed: number,
-  maxSegmentSec: number
+  maxSegmentSec: number,
+  startChapter?: number,
+  endChapter?: number
 ) {
   const lines = castText.split(/\r?\n/).filter((l) => l.trim() && !l.trim().startsWith('#'))
   if (!lines.length) {
@@ -281,13 +294,48 @@ function prepareCastForPlayer(
     })
   }
 
+  const totalMarkers = rawSegments.filter((s) => s.isMarkerEnd).length
+  const startSegIdx =
+    typeof startChapter === 'number' && startChapter > 1
+      ? Math.max(0, Math.min(rawSegments.length - 1, startChapter - 1))
+      : 0
+  let endSegIdx = rawSegments.length - 1
+  if (typeof endChapter === 'number' && endChapter >= 1) {
+    endSegIdx =
+      endChapter >= totalMarkers
+        ? rawSegments.length - 1
+        : Math.max(startSegIdx, Math.min(rawSegments.length - 1, endChapter - 1))
+  }
+
   const computedSegments: CastSegmentInfo[] = []
   const foundChapters: CastChapterInfo[] = []
   let warpedAbs = 0.0
   let unwarpedCappedAbs = 0.0
   const bodyLines: string[] = []
 
-  rawSegments.forEach((seg, segIdx) => {
+  if (startSegIdx > 0) {
+    let preRollOutput = ''
+    for (let s = 0; s < startSegIdx; s++) {
+      for (const e of rawSegments[s].events) {
+        if (e.code === 'o') {
+          preRollOutput += e.payload
+        } else {
+          if (preRollOutput.length > 0) {
+            bodyLines.push(JSON.stringify([0, 'o', preRollOutput]))
+            preRollOutput = ''
+          }
+          bodyLines.push(JSON.stringify([0, e.code, e.payload]))
+        }
+      }
+    }
+    if (preRollOutput.length > 0) {
+      bodyLines.push(JSON.stringify([0, 'o', preRollOutput]))
+    }
+  }
+
+  const windowSegments = rawSegments.slice(startSegIdx, endSegIdx + 1)
+
+  windowSegments.forEach((seg, segIdx) => {
     let segRawDur = 0.0
     let segCappedDur = 0.0
     seg.events.forEach((e) => {
@@ -311,7 +359,7 @@ function prepareCastForPlayer(
     warpedAbs = endTime
     const computedSeg: CastSegmentInfo = {
       index: segIdx,
-      fromLabel: seg.fromLabel,
+      fromLabel: segIdx === 0 && startSegIdx > 0 ? `0. Start (${seg.fromLabel})` : seg.fromLabel,
       toLabel: seg.toLabel,
       speed: segSpeed,
       rawDuration: segRawDur,
@@ -627,7 +675,9 @@ async function initPlayer() {
       rawCastText,
       props.idleTimeLimit,
       props.speed,
-      props.maxSegmentDuration
+      props.maxSegmentDuration,
+      props.startChapter,
+      props.endChapter
     )
 
     chapters.value = foundChapters
@@ -651,7 +701,7 @@ async function initPlayer() {
       terminalFontSize: props.terminalFontSize,
       terminalFontFamily: props.terminalFontFamily,
       terminalLineHeight: props.terminalLineHeight,
-      poster: props.poster,
+      poster: props.poster ?? (props.startChapter && props.startChapter > 1 ? 'npt:0:00' : undefined),
       markers: props.markers.length > 0 ? props.markers : undefined,
       pauseOnMarkers: props.pauseOnMarkers,
     }
@@ -775,19 +825,43 @@ onUnmounted(() => {
 })
 
 watch(
-  () => [props.src, props.theme, props.fit, props.speed, props.maxSegmentDuration, props.idleTimeLimit],
+  () => [
+    props.src,
+    props.theme,
+    props.fit,
+    props.speed,
+    props.maxSegmentDuration,
+    props.idleTimeLimit,
+    props.startChapter,
+    props.endChapter,
+  ],
   () => {
     initPlayer()
   }
 )
+
+watch([activeChapterIdx, hitChapterIdx], () => {
+  nextTick(() => {
+    const container = chapterPillsRef.value
+    if (!container) return
+    const activeEl = container.querySelector('.chapter-pill.hit, .chapter-pill.active') as HTMLElement | null
+    if (activeEl && typeof activeEl.scrollIntoView === 'function') {
+      activeEl.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' })
+    }
+  })
+})
 </script>
 
 <template>
   <div class="asciinema-player-wrapper">
     <!-- Optional Development Chapter Controls & Live Speed Bar (enabled via showChapterBar: true) -->
     <div v-if="props.showChapterBar && chapters.length > 0" class="asciinema-chapter-header">
+      <div v-if="props.title" class="asciinema-slide-title">
+        <span class="title-text">{{ props.title }}</span>
+        <span class="hotkey-hint">Keys: <kbd>[</kbd> Prev · <kbd>p</kbd> Play/Pause · <kbd>]</kbd> Next</span>
+      </div>
       <div class="asciinema-header-top">
-        <div class="asciinema-chapter-pills">
+        <div ref="chapterPillsRef" class="asciinema-chapter-pills">
           <button
             type="button"
             class="chapter-pill"
@@ -885,6 +959,33 @@ watch(
   flex-shrink: 0;
 }
 
+.asciinema-slide-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.asciinema-slide-title .title-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #f3f4f6;
+}
+
+.asciinema-slide-title .hotkey-hint {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.65rem;
+  color: #9ca3af;
+}
+
+.asciinema-slide-title kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 0.25rem;
+  padding: 0.05rem 0.3rem;
+  color: #e5e7eb;
+}
+
 .asciinema-header-top {
   display: flex;
   align-items: center;
@@ -898,6 +999,10 @@ watch(
   align-items: center;
   gap: 0.35rem;
   flex-wrap: wrap;
+  max-height: 3.4rem;
+  overflow-y: auto;
+  flex: 1;
+  min-width: 0;
 }
 
 .chapter-pill {
