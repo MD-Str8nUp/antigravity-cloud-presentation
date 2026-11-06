@@ -54,6 +54,70 @@ One of the best properties of Agent Skills is that they compose orthogonally. Ma
 layout: default
 ---
 
+<!-- S24b -->
+<div class="flex items-center gap-3 mb-4">
+  <h2 class="text-2xl font-bold m-0">Prompting the Migration: Desktop Implementation to Google Stack</h2>
+</div>
+
+<div class="p-4 rounded-xl bg-gray-900/90 border border-emerald-500/30 mb-4">
+  <div class="flex items-center justify-between text-xs font-mono text-emerald-400 uppercase tracking-wide mb-2">
+    <span class="flex items-center gap-2">
+      <span class="px-1.5 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/30 text-emerald-300 font-bold">/wayfinder</span>
+      <span>Operator Migration Prompt</span>
+    </span>
+    <span class="text-[10px] text-emerald-300/80 px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/20">Stage 3 &middot; Production Run</span>
+  </div>
+  <p class="text-sm font-mono text-gray-100 leading-relaxed m-0">
+    I'd like to adapt and productionize this web application for a low-volume, low-cost deployment on Google Cloud using Cloud Run and Cloud Firestore.
+  </p>
+</div>
+
+<div class="grid grid-cols-2 gap-5 text-xs">
+  <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 space-y-2.5">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-mono text-amber-400 uppercase tracking-wide">Starting Point (Run 2)</span>
+      <span class="text-[10px] text-amber-300/80 px-1.5 py-0.5 rounded bg-amber-950/60 border border-amber-500/20">Standalone Desktop</span>
+    </div>
+    <ul class="text-gray-300 space-y-1.5 list-disc pl-4">
+      <li><strong>Local Embedded Database:</strong> Local Turso (<code>libsql</code>) file (<code>data/inventory.db</code>) with SQLite semantics.</li>
+      <li><strong>Desktop Loopback Binding:</strong> Axum server hardcoded to <code>127.0.0.1:3000</code>; local filesystem attachment storage.</li>
+      <li><strong>Isolated Workbench Use:</strong> Accessible only from a single physical computer on the workbench.</li>
+      <li><strong>Hermetic Verification:</strong> 41 fast unit/integration tests running against in-memory Turso.</li>
+    </ul>
+  </div>
+
+  <div class="p-4 rounded-xl bg-gray-900/80 border border-emerald-500/30 space-y-2.5">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-mono text-emerald-400 uppercase tracking-wide">Target Architecture (Run 3)</span>
+      <span class="text-[10px] text-emerald-300/80 px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/20">Google Cloud Stack</span>
+    </div>
+    <ul class="text-gray-300 space-y-1.5 list-disc pl-4">
+      <li><strong>Scale-to-Zero Compute:</strong> Stateless <strong>Cloud Run</strong> container (<code>--min-instances=0</code>) binding to <code>0.0.0.0:$PORT</code>.</li>
+      <li><strong>Serverless Document Storage:</strong> <strong>Cloud Firestore</strong> (Native Mode) with multi-document atomic transactions.</li>
+      <li><strong>Everywhere Access:</strong> HTTPS endpoint reachable from phone, tablet, or workbench browser.</li>
+      <li><strong>Preserved Repository Seam:</strong> Offline <code>cargo test</code> suite stays untouched; Firestore adapter added behind seam.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="mt-4 p-3 rounded-lg bg-gray-900/70 border border-gray-800 flex items-center justify-between text-xs">
+  <div class="flex items-center gap-2">
+    <span class="text-cyan-300 font-semibold font-mono">Immediate Skill Chain:</span>
+    <span class="text-gray-300">Prompt activates <code>cloud-databases-onboarding</code> &amp; <code>google-cloud-waf-cost-optimization</code> to evaluate the persistence model.</span>
+  </div>
+  <span class="text-[10px] font-mono text-gray-500">&rarr; Next: Database Selection</span>
+</div>
+
+<!--
+With both process and cloud skills installed, we kick off the production migration by invoking /wayfinder with a clear architectural prompt. We ask Antigravity to adapt the existing workbench application for a low-volume, low-cost deployment on Google Cloud using Cloud Run and Cloud Firestore.
+
+Notice the shift this prompt frames: we are moving from a standalone desktop implementation—which ran against local Turso, bound to localhost, and lived on one machine—to Google's serverless stack. Crucially, our standing constraints are strict zero idle cost and preserving our 41 passing offline tests. This prompt immediately causes /wayfinder to consult cloud-databases-onboarding and google-cloud-waf-cost-optimization, which leads directly to our database selection.
+-->
+
+---
+layout: default
+---
+
 <!-- S25 -->
 <div class="flex items-center gap-3 mb-4">
   <h2 class="text-2xl font-bold m-0">Database Selection Guided by Cloud &amp; FinOps Skills</h2>
