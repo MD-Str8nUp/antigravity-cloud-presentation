@@ -61,7 +61,6 @@ title: "Skilled Run (Session 1): Installing mattpocock/skills & Charting the Way
 cast: /casts/02-skilled.cast
 startChapter: 1
 endChapter: 28
-showChapterBar: true
 autoPlay: false
 speed: 2.0
 idleTimeLimit: 2.0
@@ -79,7 +78,6 @@ title: "Skilled Run (Sessions 2–5): Resolving Decision Tickets 01–04 Across 
 cast: /casts/02-skilled.cast
 startChapter: 29
 endChapter: 80
-showChapterBar: true
 autoPlay: false
 speed: 2.0
 idleTimeLimit: 2.0
@@ -131,7 +129,6 @@ title: "Skilled Run (Sessions 6–8): 3-Variant HTML /prototype, /to-spec & /to-
 cast: /casts/02-skilled.cast
 startChapter: 81
 endChapter: 102
-showChapterBar: true
 autoPlay: false
 speed: 2.0
 idleTimeLimit: 2.0

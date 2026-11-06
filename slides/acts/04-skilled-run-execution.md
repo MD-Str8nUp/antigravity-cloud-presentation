@@ -26,7 +26,6 @@ title: "Skilled Run (Sessions 9–10): /implement-spec Worktree TDD, /code-revie
 cast: /casts/02-skilled.cast
 startChapter: 103
 endChapter: 111
-showChapterBar: true
 autoPlay: false
 speed: 2.0
 idleTimeLimit: 2.0

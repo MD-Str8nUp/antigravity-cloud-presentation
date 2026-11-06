@@ -59,7 +59,6 @@ title: "Baseline Run (Part 1): 4 Clarifying Questions & 16-Minute Build"
 cast: /casts/01-baseline.cast
 startChapter: 1
 endChapter: 11
-showChapterBar: true
 autoPlay: false
 speed: 2.0
 idleTimeLimit: 2.0
@@ -68,7 +67,7 @@ fit: both
 
 <!-- S08 -->
 <!--
-Let's interact with the first half of the Baseline Run recording. You can click any chapter pill at the top or press the right-bracket key to step through the four clarifying questions: storage stack, key features where we write in project build progress tracking, part allocation, and guitar pedal focus. Then between stop points 9 and 10, the player automatically accelerates the 23-minute one-shot implementation to 29x speed so we can watch it generate the SQLite schema, Express server, and frontend in under 30 seconds.
+Let's interact with the first half of the Baseline Run recording. Using the right-bracket key, we can step through the four clarifying questions: storage stack, key features where we write in project build progress tracking, part allocation, and guitar pedal focus. Then between stop points 9 and 10, the player automatically accelerates the 23-minute one-shot implementation to 29x speed so we can watch it generate the SQLite schema, Express server, and frontend in under 30 seconds.
 -->
 
 ---
@@ -77,7 +76,6 @@ title: "Baseline Run (Part 2): /clear Audit, 8 Bug Fixes & Browser Verification"
 cast: /casts/01-baseline.cast
 startChapter: 12
 endChapter: 17
-showChapterBar: true
 autoPlay: false
 speed: 2.0
 idleTimeLimit: 2.0
