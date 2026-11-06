@@ -29,6 +29,38 @@ Welcome everyone! Today we are exploring two very different ways of working with
 layout: default
 ---
 
+<!-- S01a -->
+<div class="flex items-center gap-3 mb-4">
+  <h2 class="text-2xl font-bold m-0">Follow Along: Antigravity &amp; Interactive Deck</h2>
+</div>
+
+<div class="grid grid-cols-2 gap-6 mt-4">
+  <QrCodeCard
+    badge="Agentic IDE & CLI"
+    title="Google Antigravity"
+    src="/images/qrcode_antigravity.google.png"
+    url="https://antigravity.google/"
+    subtitle="Download Google Antigravity and explore rules, composable skills, and MCP integrations."
+    accent="cyan"
+  />
+  <QrCodeCard
+    badge="Live Slides, Casts & 5-Lesson Codelab"
+    title="Presentation & Codelab"
+    src="/images/qrcode_domesticmouse.github.io.png"
+    url="https://domesticmouse.github.io/antigravity-cloud-presentation/"
+    subtitle="Follow the interactive Slidev deck, replay terminal recordings, and try the hands-on Codelab."
+    accent="emerald"
+  />
+</div>
+
+<!--
+Before we dive in, if you want to follow along on your own laptop or phone, here are two QR codes. On the left is antigravity.google where you can grab Google Antigravity, and on the right is the live link to this presentation deck, which includes all of our interactive terminal recordings and the five-lesson hands-on codelab.
+-->
+
+---
+layout: default
+---
+
 <!-- S02 -->
 <div class="flex items-center gap-3 mb-4">
   <h2 class="text-2xl font-bold m-0">The Core Tension: Speed vs. Comprehension Debt</h2>
