@@ -103,52 +103,63 @@ layout: default
 
 <div class="grid grid-cols-12 gap-6 items-center h-86">
   <div class="col-span-5 h-full flex items-center justify-center rounded-2xl bg-gray-950/60 border border-gray-800/80 p-4 relative overflow-hidden">
-    <svg viewBox="0 0 260 380" class="w-full h-full max-h-[330px]" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="20" y="14" width="220" height="352" rx="18" fill="#0b0c10" stroke="#374151" stroke-width="2.5" />
-      <rect x="26" y="20" width="208" height="340" rx="14" fill="#121317" stroke="#1f2937" stroke-width="1.5" />
-      <circle cx="42" cy="34" r="3.5" fill="#ef4444" opacity="0.8" />
-      <circle cx="54" cy="34" r="3.5" fill="#f59e0b" opacity="0.8" />
-      <circle cx="66" cy="34" r="3.5" fill="#10b981" opacity="0.8" />
-      <rect x="82" y="29" width="136" height="10" rx="5" fill="#181b22" />
-      <rect x="38" y="50" width="184" height="22" rx="7" fill="#181b22" stroke="#374151" stroke-width="1.2" />
-      <circle cx="50" cy="60.5" r="4" stroke="#22d3ee" stroke-width="1.5" />
-      <line x1="53" y1="63.5" x2="56.5" y2="67" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" />
-      <rect x="64" y="58" width="84" height="5" rx="2.5" fill="#374151" />
-      <rect x="38" y="84" width="184" height="78" rx="10" fill="#161920" stroke="#0891b2" stroke-width="1.2" />
+    <svg viewBox="0 0 340 300" class="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Desktop Browser Window Frame -->
+      <rect x="8" y="10" width="324" height="280" rx="12" fill="#0b0c10" stroke="#374151" stroke-width="2" />
+      <rect x="10" y="12" width="320" height="28" rx="10" fill="#181b22" />
+      <line x1="10" y1="40" x2="330" y2="40" stroke="#27272a" stroke-width="1.5" />
+      <!-- Window Controls & URL Bar -->
+      <circle cx="24" cy="26" r="4" fill="#ef4444" opacity="0.85" />
+      <circle cx="36" cy="26" r="4" fill="#f59e0b" opacity="0.85" />
+      <circle cx="48" cy="26" r="4" fill="#10b981" opacity="0.85" />
+      <rect x="66" y="19" width="180" height="14" rx="4" fill="#0f1115" stroke="#27272a" stroke-width="1" />
+      <circle cx="76" cy="26" r="2.5" stroke="#22d3ee" stroke-width="1.2" />
+      <line x1="78" y1="28" x2="80.5" y2="30.5" stroke="#22d3ee" stroke-width="1.2" stroke-linecap="round" />
+      <rect x="86" y="24" width="90" height="4" rx="2" fill="#4b5563" />
+      <!-- Row 1: Op-Amp IC -->
+      <rect x="22" y="52" width="296" height="68" rx="9" fill="#161920" stroke="#0891b2" stroke-width="1.2" />
       <g stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="60" y="100" width="44" height="46" rx="4" fill="#083344" />
-        <path d="M75 100 A7 7 0 0 0 89 100" fill="#161920" />
-        <line x1="50" y1="108" x2="60" y2="108" />
-        <line x1="50" y1="118" x2="60" y2="118" />
-        <line x1="50" y1="128" x2="60" y2="128" />
-        <line x1="50" y1="138" x2="60" y2="138" />
-        <line x1="104" y1="108" x2="114" y2="108" />
-        <line x1="104" y1="118" x2="114" y2="118" />
-        <line x1="104" y1="128" x2="114" y2="128" />
-        <line x1="104" y1="138" x2="114" y2="138" />
+        <rect x="44" y="65" width="40" height="42" rx="4" fill="#083344" />
+        <path d="M58 65 A6 6 0 0 0 70 65" fill="#161920" />
+        <line x1="35" y1="72" x2="44" y2="72" />
+        <line x1="35" y1="81" x2="44" y2="81" />
+        <line x1="35" y1="90" x2="44" y2="90" />
+        <line x1="35" y1="99" x2="44" y2="99" />
+        <line x1="84" y1="72" x2="93" y2="72" />
+        <line x1="84" y1="81" x2="93" y2="81" />
+        <line x1="84" y1="90" x2="93" y2="90" />
+        <line x1="84" y1="99" x2="93" y2="99" />
       </g>
-      <rect x="128" y="102" width="64" height="7" rx="3.5" fill="#cbd5e1" opacity="0.85" />
-      <rect x="128" y="116" width="48" height="6" rx="3" fill="#22d3ee" opacity="0.55" />
-      <rect x="128" y="134" width="38" height="10" rx="4" fill="#083344" stroke="#06b6d4" stroke-width="1" />
-      <rect x="38" y="172" width="184" height="78" rx="10" fill="#161920" stroke="#b45309" stroke-width="1.2" />
+      <rect x="110" y="68" width="96" height="7" rx="3.5" fill="#cbd5e1" opacity="0.85" />
+      <rect x="110" y="83" width="68" height="6" rx="3" fill="#22d3ee" opacity="0.55" />
+      <rect x="110" y="97" width="46" height="8" rx="3" fill="#334155" opacity="0.7" />
+      <rect x="248" y="74" width="54" height="22" rx="5" fill="#083344" stroke="#06b6d4" stroke-width="1" />
+      <rect x="261" y="83" width="28" height="4" rx="2" fill="#67e8f9" />
+      <!-- Row 2: Resistor -->
+      <rect x="22" y="130" width="296" height="68" rx="9" fill="#161920" stroke="#b45309" stroke-width="1.2" />
       <g stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M50 211 H60 L65 199 L73 223 L81 199 L89 223 L97 199 L102 211 H114" />
+        <path d="M34 164 H44 L49 152 L57 176 L65 152 L73 176 L81 152 L86 164 H96" />
       </g>
-      <rect x="128" y="190" width="64" height="7" rx="3.5" fill="#cbd5e1" opacity="0.85" />
-      <rect x="128" y="204" width="52" height="6" rx="3" fill="#fbbf24" opacity="0.55" />
-      <rect x="128" y="222" width="38" height="10" rx="4" fill="#451a03" stroke="#d97706" stroke-width="1" />
-      <rect x="38" y="260" width="184" height="78" rx="10" fill="#161920" stroke="#047857" stroke-width="1.2" />
+      <rect x="110" y="146" width="104" height="7" rx="3.5" fill="#cbd5e1" opacity="0.85" />
+      <rect x="110" y="161" width="76" height="6" rx="3" fill="#fbbf24" opacity="0.55" />
+      <rect x="110" y="175" width="52" height="8" rx="3" fill="#334155" opacity="0.7" />
+      <rect x="248" y="152" width="54" height="22" rx="5" fill="#451a03" stroke="#d97706" stroke-width="1" />
+      <rect x="261" y="161" width="28" height="4" rx="2" fill="#fcd34d" />
+      <!-- Row 3: Capacitor -->
+      <rect x="22" y="208" width="296" height="68" rx="9" fill="#161920" stroke="#047857" stroke-width="1.2" />
       <g stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="50" y1="299" x2="76" y2="299" />
-        <line x1="76" y1="281" x2="76" y2="317" />
-        <path d="M90 281 C83 289 83 309 90 317" />
-        <line x1="86" y1="299" x2="114" y2="299" />
-        <line x1="64" y1="285" x2="70" y2="285" stroke-width="1.8" />
-        <line x1="67" y1="282" x2="67" y2="288" stroke-width="1.8" />
+        <line x1="34" y1="242" x2="60" y2="242" />
+        <line x1="60" y1="224" x2="60" y2="260" />
+        <path d="M74 224 C67 232 67 252 74 260" />
+        <line x1="70" y1="242" x2="96" y2="242" />
+        <line x1="48" y1="228" x2="54" y2="228" stroke-width="1.8" />
+        <line x1="51" y1="225" x2="51" y2="231" stroke-width="1.8" />
       </g>
-      <rect x="128" y="278" width="64" height="7" rx="3.5" fill="#cbd5e1" opacity="0.85" />
-      <rect x="128" y="292" width="44" height="6" rx="3" fill="#34d399" opacity="0.55" />
-      <rect x="128" y="310" width="38" height="10" rx="4" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+      <rect x="110" y="224" width="88" height="7" rx="3.5" fill="#cbd5e1" opacity="0.85" />
+      <rect x="110" y="239" width="62" height="6" rx="3" fill="#34d399" opacity="0.55" />
+      <rect x="110" y="253" width="48" height="8" rx="3" fill="#334155" opacity="0.7" />
+      <rect x="248" y="230" width="54" height="22" rx="5" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+      <rect x="261" y="239" width="28" height="4" rx="2" fill="#6ee7b7" />
     </svg>
   </div>
   <div class="col-span-7 flex flex-col justify-center">
