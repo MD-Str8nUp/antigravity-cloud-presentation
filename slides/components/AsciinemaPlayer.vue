@@ -422,6 +422,33 @@ function findSegmentIndexAtTime(playTimeSec: number): number {
 
 let lastPolledTime = -1
 let isSeeking = false
+let wasActiveSlide = false
+
+/**
+ * Returns true only when this player instance resides on the currently visible,
+ * interactive Slidev slide (or standalone visible container), excluding preloaded
+ * hidden slides (`display: none`), transition-leaving slides, and presenter preview panes.
+ */
+function isPlayerOnActiveSlide(): boolean {
+  const el = containerRef.value
+  if (!el || typeof window === 'undefined') return false
+  if (el.offsetParent === null || el.getClientRects().length === 0) return false
+
+  const slideEl = el.closest('.slidev-page') as HTMLElement | null
+  if (slideEl) {
+    if (slideEl.style.display === 'none' || window.getComputedStyle(slideEl).display === 'none') {
+      return false
+    }
+    if (
+      slideEl.classList.contains('disable-view-transition') ||
+      slideEl.className.includes('-leave-') ||
+      slideEl.closest('.grid-section.next')
+    ) {
+      return false
+    }
+  }
+  return true
+}
 
 function hasTrailingSegment(): boolean {
   return (
@@ -468,7 +495,36 @@ function applyEndState(reason: 'ended' | 'jumped' = 'jumped') {
 }
 
 async function syncLiveSpeedFromPlayer() {
-  if (!playerInstance || isSeeking || typeof playerInstance.getCurrentTime !== 'function') return
+  if (!playerInstance || typeof playerInstance.getCurrentTime !== 'function') return
+
+  const nowActive = isPlayerOnActiveSlide()
+  if (wasActiveSlide && !nowActive) {
+    wasActiveSlide = false
+    if (isPlaying.value && typeof playerInstance.pause === 'function') {
+      try {
+        await playerInstance.pause()
+      } catch (_) {}
+      isPlaying.value = false
+    }
+    if (
+      typeof document !== 'undefined' &&
+      document.activeElement instanceof HTMLElement &&
+      containerRef.value?.contains(document.activeElement)
+    ) {
+      document.activeElement.blur()
+    }
+    return
+  }
+  if (!wasActiveSlide && nowActive) {
+    wasActiveSlide = true
+    if (typeof playerInstance.render === 'function') {
+      try {
+        playerInstance.render()
+      } catch (_) {}
+    }
+  }
+  if (!nowActive || isSeeking) return
+
   try {
     const t = await playerInstance.getCurrentTime()
     if (typeof t !== 'number' || Number.isNaN(t)) return
@@ -639,19 +695,23 @@ function stepNextChapter() {
 }
 
 function handleStageKeydown(e: KeyboardEvent) {
+  if (!isPlayerOnActiveSlide()) return
   const targetTag = (e.target as HTMLElement | null)?.tagName
   if (targetTag && ['INPUT', 'SELECT', 'TEXTAREA'].includes(targetTag)) return
   if (e.key === '[') {
     e.preventDefault()
     e.stopPropagation()
+    e.stopImmediatePropagation()
     stepPrevChapter()
   } else if (e.key === ']') {
     e.preventDefault()
     e.stopPropagation()
+    e.stopImmediatePropagation()
     stepNextChapter()
   } else if (e.key === 'p' || e.key === 'P') {
     e.preventDefault()
     e.stopPropagation()
+    e.stopImmediatePropagation()
     togglePlay()
   }
 }
@@ -689,7 +749,7 @@ async function initPlayer() {
     const playerOptions: Record<string, any> = {
       cols: props.cols,
       rows: props.rows,
-      autoPlay: props.autoPlay,
+      autoPlay: props.autoPlay && isPlayerOnActiveSlide(),
       preload: props.preload,
       loop: props.loop,
       speed: 1,
@@ -712,6 +772,7 @@ async function initPlayer() {
 
     playerInstance = AsciinemaPlayer.create({ data: v2Text }, containerRef.value, playerOptions)
     lastPolledTime = 0
+    wasActiveSlide = isPlayerOnActiveSlide()
 
     speedPollTimer = setInterval(() => {
       syncLiveSpeedFromPlayer()
