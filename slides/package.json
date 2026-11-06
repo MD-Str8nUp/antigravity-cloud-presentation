@@ -9,6 +9,7 @@
     "dev": "slidev",
     "prebuild": "npm run sync-casts && npm run sync-codelab",
     "build": "slidev build --base /antigravity-cloud-presentation/",
+    "postbuild": "mkdir -p dist/6 && cp dist/index.html dist/6/index.html && cp ../LICENSE ../FORK-NOTES.md dist/ && touch dist/.nojekyll",
     "export": "slidev export"
   },
   "dependencies": {

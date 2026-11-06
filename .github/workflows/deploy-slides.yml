@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'slides/**'
+      - 'LICENSE'
+      - 'FORK-NOTES.md'
       - 'recordings/final/**'
       - 'codelab/**'
       - '.github/workflows/deploy-slides.yml'
