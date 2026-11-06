@@ -1,0 +1,3 @@
+# Durable repository artifacts are what allow multi-session agent workflows to survive `/clear`
+
+When an operator clears the session (`/clear`), anything that lived only in the chat transcript disappears. In the **Baseline Run**, clearing the session forced the next agent to reverse-engineer domain invariants (`On Hand` vs. `Allocated` vs. `Available`) from raw SQL and JavaScript; in the **Skilled Run**, writing `GLOSSARY.md`, `docs/adr/0001-rust-htmx-turso-stack.md`, `.scratch/audio-inventory/map.md`, `spec.md`, and vertical-slice tickets to disk allowed 10 separate `/clear` sessions and 11 subagents to collaborate without losing domain precision.

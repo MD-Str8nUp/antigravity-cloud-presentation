@@ -13,7 +13,7 @@ Run 2 of the experiment, where the agent uses engineering workflow skills to mod
 _Avoid_: Spec run, planning run
 
 **Production Run**:
-Run 3 of the experiment, cloned from the completed Skilled Run with cloud skills added, where the agent adapts and productionizes the local web application for cloud deployment.
+Stage 3 of the experiment, where the completed Skilled Run architecture is adapted for low-cost serverless cloud deployment (Cloud Run and Cloud Firestore behind the repository seam) using cloud skills guidance, presented as an architectural Codelab and Slidev act without a live terminal recording.
 _Avoid_: Implementation run, comprehension run, Run 3
 
 ## Recording & Artifacts

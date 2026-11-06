@@ -1,0 +1,7 @@
+index.html
+lessons/*.html
+reference/*.html
+_site/
+.venv/
+__pycache__/
+.DS_Store

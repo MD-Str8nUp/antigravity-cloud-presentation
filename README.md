@@ -2,7 +2,7 @@
 
 **Google Antigravity (`agy`) & Agent Skills (`SKILL.md`): Baseline Vibe-Coding, Disciplined Local Architecture (`mattpocock/skills`), and Low-Cost Serverless Production (`google/skills`)**
 
-A live-recorded three-run experiment, interactive `/teach-code` **Codelabs** (`./tutorial/`), and Slidev presentation deck demonstrating how always-on Rules (`AGENTS.md`) and composable Agent Skills (`SKILL.md`) reshape how Google Antigravity (`agy`) designs, builds, and productionizes an audio electronics **Component** and **Kit** inventory web system.
+A live-recorded three-run experiment, interactive `/teach-code` **Codelabs** ([`./codelab/`](./codelab/)), and Slidev presentation deck demonstrating how always-on Rules (`AGENTS.md`) and composable Agent Skills (`SKILL.md`) reshape how Google Antigravity (`agy`) designs, builds, and productionizes an audio electronics **Component** and **Kit** inventory web system.
 
 > **Core Thesis**: *"Without skills, an AI coding agent will happily one-shot a local web prototype while burying domain rules and architectural trade-offs in ephemeral chat history. By composing engineering workflow skills (`mattpocock/skills`) with cloud architecture and deployment skills (`google/skills`), you turn `agy` into a disciplined engineering partner—building a tested Rust + HTMX + Turso/libSQL web application behind a clean repository trait seam, then seamlessly migrating persistence to **Cloud Firestore** and deploying scale-to-zero on **Cloud Run** (`$0/month` idle within the free tier)."*
 
@@ -99,7 +99,7 @@ Planning and execution across this repository are tracked in GitHub Issues (`dom
 | `recordings/` | Captured raw (`recordings/raw/`) and sanitized, chapter-marked, exit-trimmed (`recordings/final/`) **Terminal Casts** (`01-baseline.cast`, `02-skilled.cast`, `03-production.cast`). |
 | `artifacts/traces/` | Exported per-session Antigravity Markdown **Session Traces** across all three runs (`audio_inventory_baseline`, `audio_inventory_skilled`, `audio_inventory_production`). |
 | `experiments/` | Synced application workspaces from all three runs (`audio_inventory_baseline`, `audio_inventory_skilled`, `audio_inventory_production`). |
-| `tutorial/` | *(Upcoming)* Interactive `/teach-code` **Codelabs** walking learners through the three recorded runs, traces, and codebases. |
+| [`codelab/`](./codelab/) | Interactive `/teach-code` **Codelabs** (`index.md`, 5 lessons in `lessons/`, 3 printable reference sheets in `reference/`, and `build.py`) exploring when to vibe-code vs. when to engineer with skills. |
 | `slides/` | *(Upcoming)* Slidev presentation deck walking audiences through the experiment and **Codelabs**. |
 | [`.agents/skills/`](./.agents/skills/) | Installed Agent Skills from `mattpocock/skills`, `google/skills`, and `domesticmouse/skills`. |
 | [`docs/agents/`](./docs/agents/) | Agent configuration docs for GitHub issue tracking ([`issue-tracker.md`](./docs/agents/issue-tracker.md)), triage labels ([`triage-labels.md`](./docs/agents/triage-labels.md)), and domain documentation ([`domain.md`](./docs/agents/domain.md)). |
