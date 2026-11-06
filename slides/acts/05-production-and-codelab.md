@@ -6,7 +6,7 @@ class: text-center
 <!-- S23 -->
 <div class="space-y-4">
   <h1 class="text-4xl font-extrabold text-white">
-    The Production Run: Google Cloud Skills &amp; Codelab
+    Productionizing with Google Cloud Skills &amp; Codelab
   </h1>
   <p class="text-xl font-mono text-cyan-300">
     google/skills &middot; Cloud Run &middot; Cloud Firestore &middot; /teach-code
@@ -17,7 +17,7 @@ class: text-center
 </div>
 
 <!--
-Now we arrive at Stage 3 of our experiment: the Production Run. Having built a verified local application with Matt Pocock's engineering workflow skills, what happens when we compose those process skills with Google Cloud domain skills to take the application to serverless production?
+Now let's look at how to productionize what we built. Having created a verified local application with Matt Pocock's engineering workflow skills, what happens when we compose those process skills with the google/skills skill set to take the application to serverless production?
 -->
 
 ---

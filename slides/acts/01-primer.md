@@ -22,7 +22,7 @@ class: text-center
 </div>
 
 <!--
-Welcome everyone! Today we are exploring two very different ways of working with an AI coding agent like Google Antigravity: rapid, exploratory vibe coding on one hand, and structured, skill-driven engineering on the other. Rather than arguing that one approach is always right and the other is always wrong, we recorded a transparent three-stage experiment with full terminal recordings and conversation traces so you can see exactly when each workflow shines and where it breaks down.
+Welcome everyone! Today we are exploring two very different ways of working with an AI coding agent like Google Antigravity: rapid, exploratory vibe coding on one hand, and structured, skill-driven engineering on the other. Rather than arguing that one approach is always right and the other is always wrong, we recorded both approaches with full terminal recordings and conversation traces—followed by a lead-in to productionizing on Google Cloud with the google/skills skill set—so you can see exactly when each workflow shines and where it breaks down.
 -->
 
 ---
@@ -98,7 +98,7 @@ layout: default
 
 <!-- S03 -->
 <div class="flex items-center gap-3 mb-6">
-  <h2 class="text-2xl font-bold m-0">The Experiment: One Domain, Three Recorded Runs</h2>
+  <h2 class="text-2xl font-bold m-0">The Experiment: One Domain, Three Ways</h2>
 </div>
 
 <ol class="space-y-4 text-sm text-gray-200 list-decimal pl-6 mt-5 leading-relaxed">
@@ -110,21 +110,21 @@ layout: default
     </ul>
   </li>
   <li>
-    <strong class="text-white">Controlled Operator Input: Identical Prompt + Canonical Q&amp;A</strong>
+    <strong class="text-white">Two Recorded Approaches: Identical Prompt + Canonical Q&amp;A</strong>
     <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
-      <li>Every run starts from the exact same initial prompt and uses a pre-scripted <strong>Canonical Q&amp;A</strong> so differences come from the agent's skills, not extra human hints.</li>
+      <li>Both recorded runs start from the exact same initial prompt and pre-scripted <strong>Canonical Q&amp;A</strong>, with every terminal keystroke captured via <code>asciinema</code> and paired with exported <strong>Session Traces</strong> across <code>/clear</code> boundaries.</li>
     </ul>
   </li>
   <li>
-    <strong class="text-white">Full Observability: Terminal Casts + Session Traces</strong>
+    <strong class="text-white">Productionizing Later with <code>google/skills</code></strong>
     <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
-      <li>Every terminal keystroke is recorded with <code>asciinema</code> and paired with exported Antigravity <strong>Session Traces</strong> across <code>/clear</code> boundaries.</li>
+      <li>Leads into how to compose workflow skills with the <code>google/skills</code> skill set to take the local architecture to scale-to-zero Google Cloud production.</li>
     </ul>
   </li>
 </ol>
 
 <!--
-To make this comparison concrete rather than theoretical, we ran a controlled experiment around an audio electronics workbench inventory and DIY kit manager. At first glance, tracking op-amps, resistors, and pedal kits sounds like a simple two-table CRUD app. Underneath, though, are real domain questions: what happens when the same op-amp lives in two different drawer bins, or when three planned pedal builds compete for the same five chips? By holding the initial prompt and operator answers constant, we can watch exactly how different skill configurations change the agent's behavior.
+To make this comparison concrete rather than theoretical, we built an experiment around an audio electronics workbench inventory and DIY kit manager. At first glance, tracking op-amps, resistors, and pedal kits sounds like a simple two-table CRUD app. Underneath, though, are real domain questions: what happens when the same op-amp lives in two different drawer bins, or when three planned pedal builds compete for the same five chips? We recorded two alternative approaches starting from the exact same prompt and operator answers, and then use those results to lead into how to productionize the application with the google/skills skill set.
 -->
 
 ---
@@ -169,26 +169,26 @@ layout: default
 
 <!-- S05 -->
 <div class="flex items-center gap-3 mb-6">
-  <h2 class="text-2xl font-bold m-0">The Three-Run Progression</h2>
+  <h2 class="text-2xl font-bold m-0">Two Alternative Approaches + Productionizing with <code>google/skills</code></h2>
 </div>
 
 <ol class="space-y-4 text-sm text-gray-200 list-decimal pl-6 mt-5 leading-relaxed">
   <li>
-    <strong class="text-white">Run 1: The Baseline Run (Rapid Vibe Coding — <code>01-baseline.cast</code>)</strong>
+    <strong class="text-white">Approach 1: The Baseline Run (Rapid Vibe Coding — <code>01-baseline.cast</code>)</strong>
     <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
       <li>Guided only by the global one-question-at-a-time rule and ambient <code>modern-web-guidance</code>; no engineering workflow skills installed.</li>
       <li>Agent chooses Node.js + Express + <code>node:sqlite</code> + vanilla JS and builds a complete app in 16 minutes—then faces a fresh-context <code>/clear</code> review.</li>
     </ul>
   </li>
   <li>
-    <strong class="text-white">Run 2: The Skilled Run (<code>mattpocock/skills</code> — <code>02-skilled.cast</code>)</strong>
+    <strong class="text-white">Approach 2: The Skilled Run (<code>mattpocock/skills</code> — <code>02-skilled.cast</code>)</strong>
     <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
       <li>Installs 38 engineering workflow skills (<code>/wayfinder</code>, <code>/grilling</code>, <code>/domain-modeling</code>, <code>/prototype</code>, <code>/to-spec</code>, <code>/to-tickets</code>, <code>/implement-spec</code>, <code>/code-review</code>).</li>
       <li>Executes across 10 <code>/clear</code> sessions and 11 subagents to build a 41-test Rust + Axum + Maud + HTMX + local Turso application.</li>
     </ul>
   </li>
   <li>
-    <strong class="text-white">Run 3: The Production Run (<code>google/skills</code> + Interactive Codelab)</strong>
+    <strong class="text-white">Next Step: Productionizing with <code>google/skills</code> (+ Interactive Codelab)</strong>
     <ul class="list-disc pl-5 mt-1 space-y-1 text-gray-300">
       <li>Composes <code>mattpocock/skills</code> with <code>google/skills</code> to adapt the <code>InventoryRepository</code> seam for scale-to-zero <strong>Cloud Run</strong> + <strong>Cloud Firestore</strong>, culminating in a 5-lesson hands-on <strong>Codelab</strong>.</li>
     </ul>
@@ -196,5 +196,5 @@ layout: default
 </ol>
 
 <!--
-Here is our roadmap across the three runs. In Run 1, the Baseline Run, we let Antigravity vibe-code the application with only our global clarifying-question rule. In Run 2, the Skilled Run, we install Matt Pocock's workflow skills and watch how ten fresh-context sessions build a deeply modeled, test-driven Rust and HTMX application. Finally, in Run 3, we layer in Google Cloud skills to take that architecture to scale-to-zero Cloud Run and Firestore, and walk through the interactive Codelab where you can try both workflows on your own ideas.
+Here is our roadmap. In Approach 1, the Baseline Run, we let Antigravity vibe-code the application with only our global clarifying-question rule. In Approach 2, the Skilled Run, we install Matt Pocock's workflow skills and watch how ten fresh-context sessions build a deeply modeled, test-driven Rust and HTMX application. Finally, we lead into how to layer in the google/skills skill set to take that architecture to scale-to-zero Cloud Run and Firestore, and walk through the interactive Codelab where you can try these workflows on your own ideas.
 -->
