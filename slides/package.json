@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "sync-casts": "mkdir -p public/casts && cp ../recordings/final/*.cast public/casts/ 2>/dev/null || true",
-    "sync-codelab": "mkdir -p public/codelab/lessons public/codelab/reference public/codelab/assets && cp ../codelab/index.html public/codelab/ && cp ../codelab/lessons/*.html public/codelab/lessons/ && cp ../codelab/reference/*.html public/codelab/reference/ && cp ../codelab/assets/* public/codelab/assets/",
+    "sync-codelab": "(test -f ../codelab/index.html || ../codelab/.venv/bin/python ../codelab/build.py || python3 ../codelab/build.py) && mkdir -p public/codelab/lessons public/codelab/reference public/codelab/assets && cp ../codelab/index.html public/codelab/ && cp ../codelab/lessons/*.html public/codelab/lessons/ && cp ../codelab/reference/*.html public/codelab/reference/ && cp ../codelab/assets/* public/codelab/assets/",
     "predev": "npm run sync-casts && npm run sync-codelab",
     "dev": "slidev",
     "prebuild": "npm run sync-casts && npm run sync-codelab",

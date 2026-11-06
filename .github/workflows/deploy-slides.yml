@@ -30,6 +30,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build and validate codelab
+        working-directory: codelab
+        run: |
+          pip install markdown-it-py pyyaml
+          python build.py --check
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
