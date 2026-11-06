@@ -26,7 +26,13 @@ flowchart LR
 
 ## Published Codelab Lessons {#lessons}
 
-{{widget:lesson-cards}}
+The codelab unfolds across five sequential lessons that follow our three-run experiment from an initial rapid prototype to a cloud-ready architecture:
+
+We begin in **[Lesson 0001: Baseline Vibe-Coding — Rapid Exploration & Its Trade-Offs](lessons/0001-baseline-vibe-coding-for-rapid-exploration.md)** (`01-baseline.cast`), where a single global clarifying-question rule turns a one-sentence prompt into a working prototype in 16 minutes—highlighting both what went right for fast discovery and the eight bugs exposed once the session was cleared with `/clear`.
+
+From there, the next three lessons trace the **Skilled Run** (`02-skilled.cast`). **[Lesson 0002: Wayfinding & Domain Modeling — Durable Intent Across `/clear`](lessons/0002-wayfinding-and-domain-modeling-with-skills.md)** walks through Sessions 1–5, showing how `/wayfinder` and `/domain-modeling` uncovered hierarchical Storage Locations, multi-location Stock Lots, and five-state BOM fulfillment while persisting those decisions in `GLOSSARY.md` and ADRs. **[Lesson 0003: UI Prototyping, Specs & Vertical-Slice Tickets](lessons/0003-prototyping-specs-and-vertical-slice-tickets.md)** continues through Sessions 6–8 as we explore interactive layout Variants A, B, and C with `/prototype`, synthesize `spec.md` via `/to-spec`, and slice the work into eight parallelizable vertical tickets with `/to-tickets`. **[Lesson 0004: Worktree TDD, Two-Axis Code Review & Live Browser Verification](lessons/0004-worktree-tdd-code-review-and-browser-verification.md)** completes the Skilled Run in Sessions 9–10, examining how `/implement-spec` orchestrated 11 subagents across isolated git worktrees, what two-axis `/code-review` caught, and why live browser verification still mattered.
+
+Finally, **[Lesson 0005: Capstone Exercise — Productionizing on Google Cloud with `google/skills`](lessons/0005-capstone-exercise-productionizing-with-google-cloud-skills.md)** brings the workflow into the **Production Run**, demonstrating how `google/skills` (`cloud-databases-onboarding`, `google-cloud-waf-cost-optimization`, `cloud-run-basics`, and `gcloud`) compose with `/wayfinder` so you can apply the full toolkit to your own project on scale-to-zero Cloud Run and Cloud Firestore.
 
 ## Reference Sheets & Printable Guides {#reference-sheets}
 
