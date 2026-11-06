@@ -28,16 +28,33 @@ title: Baseline Run Setup — Global Rule + Ambient Web Guidance
 
 <!-- S07 -->
 <div class="space-y-4">
+  <div class="grid grid-cols-2 gap-4">
+    <div class="p-3.5 rounded-xl bg-gray-900/90 border border-cyan-500/30 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between text-xs font-mono text-cyan-400 uppercase tracking-wide mb-2">
+          <span>~/.gemini/AGENTS.md</span>
+          <span class="text-[10px] text-cyan-300/80 px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/20">Global User Rule</span>
+        </div>
+        <div class="text-xs font-mono text-gray-200 space-y-1 leading-relaxed">
+          <p class="text-gray-300">You are a helpful assistant.</p>
+          <p class="text-cyan-200 font-medium">When something is unclear, please ask clarifying questions, one at a time.</p>
+        </div>
+      </div>
+    </div>
 
-```markdown
-<!-- ~/.gemini/AGENTS.md (Global User Rule) -->
-You are a helpful assistant.
-When something is unclear, please ask clarifying questions, one at a time.
-
-<!-- Initial Operator Prompt -->
-I'd like to build a web application to track my audio electronics
-components inventory and DIY kit builds.
-```
+    <div class="p-3.5 rounded-xl bg-gray-900/90 border border-cyan-500/30 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between text-xs font-mono text-cyan-400 uppercase tracking-wide mb-2">
+          <span>Operator Prompt</span>
+          <span class="text-[10px] text-cyan-300/80 px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/20">Initial Input</span>
+        </div>
+        <p class="text-xs font-mono text-gray-200 leading-relaxed">
+          I'd like to build a web application to track my audio electronics
+          components inventory and DIY kit builds.
+        </p>
+      </div>
+    </div>
+  </div>
 
   <div class="grid grid-cols-2 gap-4 text-xs pt-2">
     <div class="p-3 rounded-lg bg-gray-900/80 border border-gray-800">
