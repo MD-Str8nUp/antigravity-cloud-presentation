@@ -61,6 +61,67 @@ Before we dive in, if you want to follow along on your own laptop or phone, here
 layout: default
 ---
 
+<!-- S01b -->
+<div class="flex items-center justify-between mb-4">
+  <div class="flex items-center gap-3">
+    <h2 class="text-2xl font-bold m-0">My Antigravity Rig: Installed Plugins</h2>
+  </div>
+  <a 
+    href="https://antigravity.google/docs/plugins/" 
+    target="_blank" 
+    class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-cyan-950/40 border border-cyan-500/30 text-xs font-mono text-cyan-300 hover:text-cyan-200 transition-colors"
+  >
+    <span>antigravity.google/docs/plugins</span>
+    <span class="text-xs">&rarr;</span>
+  </a>
+</div>
+
+<div class="grid grid-cols-12 gap-6 items-center">
+  <!-- Screenshot Frame -->
+  <div class="col-span-7">
+    <div class="rounded-xl border border-gray-700/60 bg-[#0d0e12] overflow-hidden shadow-xl p-1">
+      <img 
+        src="/images/installed-plugins.png" 
+        alt="Antigravity Installed Plugins" 
+        class="w-full h-auto rounded-lg object-contain"
+      />
+    </div>
+  </div>
+
+  <!-- Breakdown Column -->
+  <div class="col-span-5 space-y-3">
+    <div class="p-3 rounded-lg bg-gray-900/80 border border-gray-800">
+      <div class="text-xs font-mono text-cyan-400 font-semibold">Live External Tools (MCP)</div>
+      <p class="text-xs text-gray-300 mt-1">
+        <strong>Chrome DevTools:</strong> Headless browser interaction, UI tests, and console logs.
+      </p>
+    </div>
+
+    <div class="p-3 rounded-lg bg-gray-900/80 border border-gray-800">
+      <div class="text-xs font-mono text-emerald-400 font-semibold">Specialized Subagents</div>
+      <p class="text-xs text-gray-300 mt-1">
+        <strong>egm:</strong> Multi-agent review swarm for spec drafting, quality audits, and verification.
+      </p>
+    </div>
+
+    <div class="p-3 rounded-lg bg-gray-900/80 border border-gray-800">
+      <div class="text-xs font-mono text-purple-400 font-semibold">Domain &amp; Platform Guidance</div>
+      <p class="text-xs text-gray-300 mt-1">
+        <strong>Modern Web Guidance, Firebase, Dart &amp; Flutter:</strong> Opinionated rules and baseline idioms.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!--
+Presenter note:
+Here is a snapshot of my Antigravity customizations panel. In Antigravity, plugins are the distribution vehicle for skills, specialized subagents, and MCP servers. Notice we have Chrome DevTools for browser automation, egm for multi-agent spec reviews, and domain plugins like Modern Web Guidance. All official and community plugins are documented at antigravity.google/docs/plugins.
+-->
+
+---
+layout: default
+---
+
 <!-- S02 -->
 <div class="flex items-center gap-3 mb-4">
   <h2 class="text-2xl font-bold m-0">The Core Tension: Speed vs. Comprehension Debt</h2>
